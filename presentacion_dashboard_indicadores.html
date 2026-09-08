@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presentación · Dashboard de Indicadores · CESFAM Tongoy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:'Archivo',system-ui,sans-serif;
+  --font-label:'Barlow Condensed',sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --c-brand:#22303A; --c-brand-700:#2C3E4B; --c-brand-300:#5A6B77;
+  --c-fg:#1E272E; --c-bg:#fff; --c-text:#3D4852; --c-muted:#6B7680;
+  --c-line:#DBE1E4; --c-soft:#F5F6F4; --c-page:#E6E8E5;
+  --c-ok:#1B6B45; --c-ok-bg:#E4F0EA;
+  --c-warn:#9A6400; --c-warn-bg:#F8EEDB;
+  --c-crit:#9E2B25; --c-crit-bg:#F6E3E1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font-body);background:var(--c-brand);color:var(--c-fg);overflow:hidden}
+
+/* Deck */
+.deck{width:100vw;height:100vh;position:relative}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:clamp(1.5rem,4vw,3.5rem);background:var(--c-bg);opacity:0;transition:opacity .35s ease}
+.slide.is-active{display:flex;opacity:1}
+.slide--dark{background:var(--c-brand);background-image:linear-gradient(155deg,var(--c-brand),var(--c-brand-700));color:#fff}
+.slide--soft{background:var(--c-page)}
+
+/* Progress + nav */
+.hud{position:fixed;bottom:1.1rem;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:1rem;z-index:100}
+.hud__dots{display:flex;gap:.4rem}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dot.is-active{background:#fff;transform:scale(1.35)}
+.slide:not(.slide--dark) ~ .hud .dot{}
+.hud__count{font-family:var(--font-mono);font-size:.75rem;color:rgba(255,255,255,.6);letter-spacing:.05em}
+.nav-arrow{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;width:44px;height:44px;border-radius:50%;font-size:1.3rem;cursor:pointer;z-index:100;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.nav-arrow:hover{background:rgba(255,255,255,.25)}
+.nav-arrow--prev{left:1rem} .nav-arrow--next{right:1rem}
+
+/* Tipografía de slides */
+.kicker{font-family:var(--font-label);font-size:clamp(.9rem,2vw,1.15rem);letter-spacing:.28em;text-transform:uppercase;font-weight:600;margin-bottom:1rem}
+.slide--dark .kicker{color:#9FB2BD}
+.slide:not(.slide--dark) .kicker{color:var(--c-brand-300)}
+.big{font-family:var(--font-display);font-weight:900;line-height:.98;letter-spacing:-.02em;font-size:clamp(2.2rem,6.5vw,5rem)}
+.h2{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.01em;font-size:clamp(1.8rem,4.5vw,3.2rem)}
+.lead{font-size:clamp(1.05rem,2.2vw,1.5rem);line-height:1.5;max-width:60ch;color:var(--c-text);margin-top:1rem}
+.slide--dark .lead{color:#C6D2D8}
+.spacer{flex:1}
+
+/* Slide footer */
+.slide__foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-label);font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:var(--c-muted);padding-top:1rem;border-top:1px solid var(--c-line)}
+.slide--dark .slide__foot{color:#9FB2BD;border-top-color:rgba(255,255,255,.15)}
+
+/* Portada */
+.cover__brand{font-family:var(--font-label);letter-spacing:.2em;font-size:1rem;text-transform:uppercase;color:#9FB2BD;font-weight:600}
+.cover__title{font-family:var(--font-display);font-weight:900;font-size:clamp(2.8rem,8vw,6rem);line-height:.95;letter-spacing:-.03em;margin:.5rem 0}
+.cover__sub{font-size:clamp(1.1rem,2.5vw,1.6rem);color:#C6D2D8;max-width:50ch;line-height:1.4}
+.cover__tag{display:inline-block;margin-top:1.5rem;font-family:var(--font-label);letter-spacing:.15em;font-size:1rem;text-transform:uppercase;padding:.5rem 1rem;border:1px solid rgba(255,255,255,.3);border-radius:3px;color:#fff}
+
+/* Problema: cards de dolor */
+.pain-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1.5rem;max-width:900px}
+@media(min-width:700px){.pain-grid{grid-template-columns:repeat(3,1fr)}}
+.pain{background:var(--c-crit-bg);border-left:4px solid var(--c-crit);padding:1.2rem;border-radius:3px}
+.pain__n{font-family:var(--font-display);font-weight:900;font-size:2rem;color:var(--c-crit);line-height:1}
+.pain__t{font-weight:700;margin:.4rem 0 .3rem;font-size:1.05rem}
+.pain__d{font-size:.95rem;color:var(--c-text);line-height:1.4}
+
+/* Solución: 3 pilares */
+.pillars{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1.5rem;max-width:960px}
+@media(min-width:700px){.pillars{grid-template-columns:repeat(3,1fr)}}
+.pillar{background:#fff;border:1px solid var(--c-line);border-top:4px solid var(--c-ok);padding:1.3rem;border-radius:3px}
+.pillar__ico{font-family:var(--font-display);font-weight:900;font-size:1.6rem;color:var(--c-ok);margin-bottom:.5rem}
+.pillar__t{font-family:var(--font-label);letter-spacing:.05em;text-transform:uppercase;font-weight:700;font-size:1.25rem;margin-bottom:.4rem;color:var(--c-brand)}
+.pillar__d{font-size:.98rem;line-height:1.45;color:var(--c-text)}
+
+/* Antes/Después */
+.ba{display:grid;grid-template-columns:1fr;gap:1.2rem;margin-top:1.5rem;max-width:1000px}
+@media(min-width:760px){.ba{grid-template-columns:1fr auto 1fr;align-items:center}}
+.ba__col{border-radius:4px;padding:1.4rem}
+.ba__col--before{background:var(--c-crit-bg);border:1px solid #E0B4B0}
+.ba__col--after{background:var(--c-ok-bg);border:1px solid #B4D8C6}
+.ba__lbl{font-family:var(--font-label);letter-spacing:.12em;text-transform:uppercase;font-weight:700;font-size:1rem;margin-bottom:.7rem}
+.ba__col--before .ba__lbl{color:var(--c-crit)}
+.ba__col--after .ba__lbl{color:var(--c-ok)}
+.ba__list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.ba__list li{font-size:.98rem;line-height:1.35;padding-left:1.4rem;position:relative}
+.ba__list li::before{position:absolute;left:0;font-weight:700}
+.ba__col--before li::before{content:"✕";color:var(--c-crit)}
+.ba__col--after li::before{content:"✓";color:var(--c-ok)}
+.ba__arrow{display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:2rem;color:var(--c-brand-300);font-weight:900}
+@media(max-width:759px){.ba__arrow{transform:rotate(90deg)}}
+
+/* Numeros grandes */
+.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:1.5rem;max-width:900px}
+@media(min-width:700px){.stat-row{grid-template-columns:repeat(4,1fr)}}
+.stat{text-align:left}
+.stat__n{font-family:var(--font-display);font-weight:900;font-size:clamp(2.4rem,5vw,3.5rem);line-height:.9;color:#fff}
+.stat__l{font-family:var(--font-label);letter-spacing:.08em;text-transform:uppercase;font-size:.9rem;color:#9FB2BD;margin-top:.4rem}
+.stat--ok .stat__n{color:#6FD69F}
+.stat--warn .stat__n{color:#E6B85C}
+.stat--crit .stat__n{color:#E08A84}
+
+/* Demo pasos */
+.steps{display:grid;grid-template-columns:1fr;gap:.8rem;margin-top:1.5rem;max-width:820px}
+.step{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:baseline;background:var(--c-soft);padding:1rem 1.2rem;border-radius:3px;border-left:3px solid var(--c-brand)}
+.step__n{font-family:var(--font-display);font-weight:900;font-size:1.5rem;color:var(--c-brand-300)}
+.step__t{font-size:1.05rem;line-height:1.4}
+.step__t strong{color:var(--c-brand)}
+.step__t code{font-family:var(--font-mono);font-size:.85em;background:var(--c-brand);color:#fff;padding:.1rem .4rem;border-radius:2px}
+
+/* Trazabilidad visual */
+.trace{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1.5rem;max-width:900px}
+@media(min-width:700px){.trace{grid-template-columns:1fr auto 1fr auto 1fr;align-items:center}}
+.trace__box{padding:1rem 1.1rem;border-radius:3px;text-align:center}
+.trace__box--rem{background:var(--c-brand);color:#fff}
+.trace__box--calc{background:var(--c-soft);border:1px solid var(--c-line)}
+.trace__box--res{background:var(--c-ok-bg);border:1px solid #B4D8C6}
+.trace__lbl{font-family:var(--font-label);letter-spacing:.1em;text-transform:uppercase;font-size:.8rem;font-weight:600;opacity:.8;margin-bottom:.3rem}
+.trace__v{font-family:var(--font-mono);font-size:.9rem;font-weight:500}
+.trace__box--res .trace__v{font-family:var(--font-display);font-weight:900;font-size:1.5rem;color:var(--c-ok)}
+.trace__op{font-family:var(--font-display);font-weight:900;font-size:1.5rem;color:var(--c-brand-300);text-align:center}
+@media(max-width:699px){.trace__op{transform:rotate(90deg)}}
+
+/* Cierre */
+.close-cta{margin-top:2rem;display:flex;flex-wrap:wrap;gap:1rem}
+.close-cta__item{font-family:var(--font-label);letter-spacing:.1em;text-transform:uppercase;font-size:1rem;padding:.7rem 1.2rem;border:1px solid rgba(255,255,255,.3);border-radius:3px;color:#fff}
+
+/* keyboard hint */
+.khint{position:fixed;bottom:1rem;right:1.2rem;font-family:var(--font-mono);font-size:.7rem;color:rgba(255,255,255,.4);z-index:100}
+.slide:not(.slide--dark).is-active ~ .khint{color:rgba(30,39,46,.4)}
+
+@media print{
+  body{overflow:visible}
+  .slide{display:flex!important;opacity:1!important;position:relative;height:100vh;page-break-after:always;inset:auto}
+  .hud,.nav-arrow,.khint{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide slide--dark is-active">
+    <div class="spacer"></div>
+    <p class="cover__brand">Unidad de Bioestadística · CESFAM Tongoy · Reunión Técnica 2026</p>
+    <h1 class="cover__title">Dashboard de<br>Indicadores</h1>
+    <p class="cover__sub">Un sistema para ver la progresión de nuestras Metas Sanitarias e IAAPS, corte a corte, con trazabilidad completa al REM.</p>
+    <span class="cover__tag">Metas Sanitarias · IAAPS · 2026</span>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>Ley 19.813 · COMGES 1.12 · MAIS</span><span>Presenta · Ismael</span></div>
+  </section>
+
+  <!-- 2 · EL PROBLEMA -->
+  <section class="slide slide--soft">
+    <p class="kicker">El punto de partida</p>
+    <h2 class="h2">Los datos llegan,<br>pero no se leen.</h2>
+    <p class="lead">Cada mes recibimos los cortes desde DESAM Coquimbo. Son correctos, pero llegan como planillas sueltas: cuesta ver la evolución, comparar entre cortes y explicar de dónde sale cada número.</p>
+    <div class="pain-grid">
+      <div class="pain">
+        <div class="pain__n">01</div>
+        <div class="pain__t">Fotos aisladas</div>
+        <div class="pain__d">Vemos el mes actual, no la película. La tendencia se pierde.</div>
+      </div>
+      <div class="pain">
+        <div class="pain__n">02</div>
+        <div class="pain__t">Sin formato común</div>
+        <div class="pain__d">Cada archivo distinto. Difícil de mostrar al equipo y al Director.</div>
+      </div>
+      <div class="pain">
+        <div class="pain__n">03</div>
+        <div class="pain__t">Origen opaco</div>
+        <div class="pain__d">¿De qué celda REM sale este indicador? La respuesta no está a mano.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>El problema</span><span>02</span></div>
+  </section>
+
+  <!-- 3 · LA IDEA -->
+  <section class="slide slide--dark">
+    <div class="spacer"></div>
+    <p class="kicker">La idea</p>
+    <h2 class="big">Estandarizar<br>una sola vez.<br><span style="color:#6FD69F">Ver siempre.</span></h2>
+    <p class="lead">En lugar de rehacer una infografía cada mes, construimos un tablero que se alimenta de una planilla simple y muestra la evolución de todos los indicadores, con su origen REM incorporado.</p>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>La solución</span><span>03</span></div>
+  </section>
+
+  <!-- 4 · TRES PILARES -->
+  <section class="slide">
+    <p class="kicker">Qué hace el dashboard</p>
+    <h2 class="h2">Tres cosas, bien hechas.</h2>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar__ico">↗</div>
+        <div class="pillar__t">Sigue la progresión</div>
+        <div class="pillar__d">Cada indicador con su serie corte a corte. Sparkline, tendencia y línea de meta. Se ve de inmediato si mejora, se estanca o retrocede.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar__ico">÷</div>
+        <div class="pillar__t">Muestra el origen</div>
+        <div class="pillar__d">Un clic revela cómo se construye: numerador, denominador y la celda REM exacta. Trazabilidad para auditoría de la Unidad Técnica.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar__ico">+</div>
+        <div class="pillar__t">Crece con nosotros</div>
+        <div class="pillar__d">Cargar un mes nuevo es agregar una fila. Admite años anteriores (2024–2025) y deja lista la base para proyecciones.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>Los tres pilares</span><span>04</span></div>
+  </section>
+
+  <!-- 5 · ANTES / DESPUÉS -->
+  <section class="slide slide--soft">
+    <p class="kicker">El cambio</p>
+    <h2 class="h2">De la planilla al panorama.</h2>
+    <div class="ba">
+      <div class="ba__col ba__col--before">
+        <p class="ba__lbl">Antes</p>
+        <ul class="ba__list">
+          <li>Un archivo distinto por mes</li>
+          <li>Comparar cortes a mano</li>
+          <li>Origen REM en documentos aparte</li>
+          <li>Difícil de proyectar</li>
+        </ul>
+      </div>
+      <div class="ba__arrow">→</div>
+      <div class="ba__col ba__col--after">
+        <p class="ba__lbl">Ahora</p>
+        <ul class="ba__list">
+          <li>Un tablero único, siempre igual</li>
+          <li>Serie completa en una vista</li>
+          <li>Fórmula REM en cada indicador</li>
+          <li>Base lista para predecir</li>
+        </ul>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>Antes y ahora</span><span>05</span></div>
+  </section>
+
+  <!-- 6 · QUÉ MUESTRA HOY (números) -->
+  <section class="slide slide--dark">
+    <p class="kicker">Lo que ya está cargado</p>
+    <h2 class="h2">Marzo a julio 2026,<br>en un solo lugar.</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="stat__n">26</div><div class="stat__l">Indicadores<br>en seguimiento</div></div>
+      <div class="stat stat--ok"><div class="stat__n">20</div><div class="stat__l">Cumplen al<br>último corte</div></div>
+      <div class="stat stat--warn"><div class="stat__n">3</div><div class="stat__l">Bajo meta</div></div>
+      <div class="stat stat--crit"><div class="stat__n">2</div><div class="stat__l">Críticos ·<br>foco prioritario</div></div>
+    </div>
+    <p class="lead" style="margin-top:2rem">9 Metas Sanitarias + 17 indicadores IAAPS. Cada uno con su serie, su meta y su procedencia REM documentada.</p>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>El estado actual</span><span>06</span></div>
+  </section>
+
+  <!-- 7 · TRAZABILIDAD (el diferenciador) -->
+  <section class="slide">
+    <p class="kicker">El corazón del proyecto</p>
+    <h2 class="h2">Cada número<br>tiene su origen.</h2>
+    <p class="lead">Ejemplo real — Lactancia Materna Exclusiva al 6º mes, corte julio:</p>
+    <div class="trace">
+      <div class="trace__box trace__box--rem">
+        <div class="trace__lbl">Numerador · REM A03 H61</div>
+        <div class="trace__v">14 niños con LME</div>
+      </div>
+      <div class="trace__op">÷</div>
+      <div class="trace__box trace__box--rem">
+        <div class="trace__lbl">Denominador · REM A03 H67</div>
+        <div class="trace__v">21 controles 6º mes</div>
+      </div>
+      <div class="trace__op">=</div>
+      <div class="trace__box trace__box--res">
+        <div class="trace__lbl">Resultado al corte</div>
+        <div class="trace__v">66,7%</div>
+      </div>
+    </div>
+    <p class="lead" style="font-size:1rem;color:var(--c-muted);margin-top:1.5rem">Esto convierte una planilla suelta en un instrumento auditable: cualquiera puede verificar el dato contra el REM.</p>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>Trazabilidad REM</span><span>07</span></div>
+  </section>
+
+  <!-- 8 · CÓMO SE MANTIENE -->
+  <section class="slide slide--soft">
+    <p class="kicker">Mantenerlo es simple</p>
+    <h2 class="h2">Tres pasos, cada mes.</h2>
+    <div class="steps">
+      <div class="step"><span class="step__n">1</span><span class="step__t">Abrir la <strong>planilla de datos</strong> y agregar una fila por indicador con el nuevo corte.</span></div>
+      <div class="step"><span class="step__n">2</span><span class="step__t">Ejecutar el generador: <code>python generar_dashboard.py</code></span></div>
+      <div class="step"><span class="step__n">3</span><span class="step__t">Listo. El tablero <strong>se actualiza solo</strong> con la serie extendida. No se toca código.</span></div>
+    </div>
+    <p class="lead" style="font-size:1rem;color:var(--c-muted);margin-top:1.5rem">La estandarización queda protegida: aunque los archivos oficiales sigan sin formato, nuestro centro tiene el suyo.</p>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>Operación mensual</span><span>08</span></div>
+  </section>
+
+  <!-- 9 · A FUTURO -->
+  <section class="slide slide--dark">
+    <div class="spacer"></div>
+    <p class="kicker">Lo que viene</p>
+    <h2 class="big">Cargar el pasado.<br><span style="color:#6FD69F">Anticipar el futuro.</span></h2>
+    <p class="lead">Al incorporar los cortes de 2024 y 2025, el tablero mostrará años completos y las proyecciones ganarán solidez. El objetivo: pasar de reportar lo que pasó a anticipar lo que viene.</p>
+    <div class="spacer"></div>
+    <div class="slide__foot"><span>Visión</span><span>09</span></div>
+  </section>
+
+  <!-- 10 · CIERRE -->
+  <section class="slide slide--dark" style="background-image:linear-gradient(155deg,#1B6B45,#22303A)">
+    <div class="spacer"></div>
+    <p class="cover__brand" style="color:#B4D8C6">CESFAM Tongoy · Unidad de Bioestadística</p>
+    <h2 class="cover__title" style="font-size:clamp(2.2rem,6vw,4.5rem)">Un dato claro<br>es una decisión<br>mejor tomada.</h2>
+    <div class="close-cta">
+      <span class="close-cta__item">Ver el dashboard en vivo</span>
+      <span class="close-cta__item">Preguntas</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="slide__foot" style="border-top-color:rgba(255,255,255,.2)"><span>Gracias</span><span>10 · Fin</span></div>
+  </section>
+
+</div>
+
+<button class="nav-arrow nav-arrow--prev" id="prev" aria-label="Anterior">‹</button>
+<button class="nav-arrow nav-arrow--next" id="next" aria-label="Siguiente">›</button>
+
+<div class="hud">
+  <div class="hud__dots" id="dots"></div>
+  <span class="hud__count" id="count"></span>
+</div>
+<div class="khint">← → o espacio para avanzar</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const dots=document.getElementById('dots');
+slides.forEach((_,k)=>{const b=document.createElement('button');b.className='dot'+(k===0?' is-active':'');b.onclick=()=>go(k);dots.appendChild(b);});
+const dotEls=[...dots.children];
+const count=document.getElementById('count');
+function render(){
+  slides.forEach((s,k)=>s.classList.toggle('is-active',k===i));
+  dotEls.forEach((d,k)=>d.classList.toggle('is-active',k===i));
+  count.textContent=(i+1)+' / '+slides.length;
+}
+function go(k){i=Math.max(0,Math.min(slides.length-1,k));render();}
+function next(){go(i+1);} function prev(){go(i-1);}
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+  if(e.key==='ArrowLeft'){e.preventDefault();prev();}
+});
+// swipe móvil
+let x0=null;
+document.addEventListener('touchstart',e=>x0=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50){dx<0?next():prev();}x0=null;});
+render();
+</script>
+</body>
+</html>
