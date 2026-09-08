@@ -1,0 +1,44 @@
+indicador,nombre,tipo,corte,mes,anio,valor_corte,global,comuna,meta_umbral,numerador,denominador,brecha,estado,nota,polaridad
+M3,Tasa consultas médicas morbilidad,anual,2,abril,2026,83.7,,,80,,,,cumple,,directa
+M3,Tasa consultas médicas morbilidad,anual,3,mayo,2026,90.4,,,80,,,,cumple,,directa
+M3,Tasa consultas médicas morbilidad,anual,5,julio,2026,87.5,41.0,82.0,80,4604,5261,657,cumple,,directa
+M4,Resolutividad APS,mensual,2,abril,2026,51.2,,,10,,,,cumple,Polaridad inversa: meta menor o igual 10%,inversa
+M4,Resolutividad APS,mensual,3,mayo,2026,51.0,,,10,,,,cumple,Polaridad inversa: meta menor o igual 10%,inversa
+M4,Resolutividad APS,mensual,5,julio,2026,100.0,5.51,96.0,10,416,755,339,cumple,Polaridad inversa: meta menor o igual 10%,inversa
+M5,Visita Domiciliaria Integral,anual,2,abril,2026,100.0,,,22,,,,cumple,,directa
+M5,Visita Domiciliaria Integral,anual,3,mayo,2026,92.9,,,22,,,,cumple,,directa
+M5,Visita Domiciliaria Integral,anual,5,julio,2026,100.0,14.0,54.7,22,464,438,0,cumple,,directa
+M61A,EMP Mujeres 20-64,anual,2,abril,2026,100.0,,,22.6,,,,cumple,,directa
+M61A,EMP Mujeres 20-64,anual,3,mayo,2026,100.0,,,22.6,,,,cumple,,directa
+M61A,EMP Mujeres 20-64,anual,5,julio,2026,100.0,19.64,53.6,22.6,664,446,0,cumple,,directa
+M61B,EMP Hombres 20-64,anual,2,abril,2026,80.9,,,19.6,,,,bajo,,directa
+M61B,EMP Hombres 20-64,anual,3,mayo,2026,99.4,,,19.6,,,,cumple,,directa
+M61B,EMP Hombres 20-64,anual,5,julio,2026,90.7,10.37,32.5,19.6,359,396,37,cumple,,directa
+M62,EMP 65 y más,anual,2,abril,2026,100.0,,,44.6,,,,cumple,,directa
+M62,EMP 65 y más,anual,3,mayo,2026,100.0,,,44.6,,,,cumple,,directa
+M62,EMP 65 y más,anual,5,julio,2026,100.0,29.40,50.7,44.6,528,467,0,cumple,,directa
+M7,Evaluación DSM 12-23m,anual,2,abril,2026,100.0,,,95.05,,,,cumple,,directa
+M7,Evaluación DSM 12-23m,anual,3,mayo,2026,100.0,,,95.05,,,,cumple,,directa
+M7,Evaluación DSM 12-23m,anual,5,julio,2026,100.0,58.56,62.2,95.05,65,62,0,cumple,,directa
+M8,Control Adolescente 10-19,anual,2,abril,2026,100.0,,,22.2,,,,cumple,,directa
+M8,Control Adolescente 10-19,anual,3,mayo,2026,100.0,,,22.2,,,,cumple,,directa
+M8,Control Adolescente 10-19,anual,5,julio,2026,100.0,20.12,59.1,22.2,312,201,0,cumple,,directa
+M91,Cobertura Salud Mental,anual,2,abril,2026,167.4,,,21.2,,,,cumple,,directa
+M91,Cobertura Salud Mental,anual,3,mayo,2026,168.3,,,21.2,,,,cumple,,directa
+M91,Cobertura Salud Mental,anual,5,julio,2026,267.4,56.69,114.9,21.2,1406,526,0,cumple,,directa
+M92,Tasa controles Salud Mental,anual,2,abril,2026,96.2,,,6.14,,,,cumple,,directa
+M92,Tasa controles Salud Mental,anual,3,mayo,2026,100.0,,,6.14,,,,cumple,,directa
+M92,Tasa controles Salud Mental,anual,5,julio,2026,69.2,2.48,98.4,6.14,3485,5036,1551,bajo,,directa
+M93,Egresos alta clínica SM,anual,2,abril,2026,39.8,,,12,,,,critico,,directa
+M93,Egresos alta clínica SM,anual,3,mayo,2026,40.7,,,12,,,,critico,,directa
+M93,Egresos alta clínica SM,anual,5,julio,2026,33.5,2.35,59.7,12,33,98,65,critico,,directa
+M12,Ingreso precoz embarazo,mensual,2,abril,2026,79.5,,,94.3,,,,bajo,,directa
+M12,Ingreso precoz embarazo,mensual,3,mayo,2026,84.8,,,94.3,,,,bajo,,directa
+M12,Ingreso precoz embarazo,mensual,5,julio,2026,89.2,84.09,93.5,94.3,37,41,4,bajo,,directa
+M13,Anticoncepción adolescente,semestral,5,julio,2026,88.7,21.10,73.8,23.8,157,177,20,cumple,,directa
+M14,Cobertura DM2,semestral,5,julio,2026,106.1,64.82,89.3,61.1,850,801,0,cumple,,directa
+M15,Cobertura HTA,semestral,5,julio,2026,101.5,53.82,78.2,53.0,1603,1579,0,cumple,,directa
+M17A,Menores 3a libres caries,anual,2,abril,2026,100.0,,,71.01,,,,cumple,,directa
+M17A,Menores 3a libres caries,anual,3,mayo,2026,100.0,,,71.01,,,,cumple,,directa
+M17A,Menores 3a libres caries,anual,5,julio,2026,94.1,38.98,70.3,71.01,92,98,6,cumple,,directa
+M17B,Normalidad nutricional menor 2a,semestral,5,julio,2026,94.8,58.39,86.7,61.6,94,99,5,cumple,,directa
