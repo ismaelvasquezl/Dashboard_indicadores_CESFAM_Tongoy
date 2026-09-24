@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Guía de uso del Dashboard de Indicadores · CESFAM Tongoy">
+<title>Guía de uso · Dashboard de Indicadores · CESFAM Tongoy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pet:#0E5F63; --pet-900:#0A2529; --pet-700:#0C4A4E; --pet-300:#4A9296;
+  --menta:#7FD4C4; --menta-bg:#E7F5F1;
+  --fg:#14201F; --bg:#fff; --text:#33403E; --muted:#6A7876;
+  --line:#DCE5E3; --soft:#F4F8F7; --page:#EAF0EE;
+  --ok:#3BB273; --warn:#E0A63C; --crit:#E5645B;
+  --font-display:'Archivo',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-body);color:var(--fg);background:var(--page);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 40px rgba(14,95,99,.08)}
+.hero{background:var(--pet);background-image:linear-gradient(155deg,var(--pet),var(--pet-700));color:#fff;padding:2.2rem 2rem 1.8rem}
+.hero__eyebrow{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#9FD4CB;margin:0 0 .4rem}
+.hero__title{font-family:var(--font-display);font-weight:900;font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.05;letter-spacing:-.01em;margin:0}
+.hero__sub{font-size:1.05rem;color:#C6E4DF;margin:.6rem 0 0}
+.hero__links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+.hero__link{font-family:var(--font-body);font-weight:600;font-size:.9rem;text-decoration:none;padding:.55rem 1rem;border-radius:4px;background:var(--menta);color:var(--pet-900);transition:background .15s}
+.hero__link:hover{background:#6BC5B4}
+.hero__link--ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.hero__link--ghost:hover{background:rgba(255,255,255,.2)}
+.content{padding:2rem}
+.content h2{font-family:var(--font-display);font-weight:800;font-size:1.5rem;color:var(--pet-900);margin:2.2rem 0 .8rem;padding-bottom:.4rem;border-bottom:2px solid var(--pet)}
+.content h2:first-child{margin-top:0}
+.content h3{font-family:var(--font-display);font-weight:700;font-size:1.15rem;color:var(--pet-700);margin:1.6rem 0 .6rem}
+.content p{margin:.7rem 0}
+.content ul,.content ol{margin:.7rem 0;padding-left:1.4rem}
+.content li{margin:.35rem 0}
+.content strong{color:var(--pet-900)}
+.content a{color:var(--pet);text-decoration:underline;text-underline-offset:2px}
+.content code{font-family:var(--font-mono);font-size:.86em;background:var(--menta-bg);color:var(--pet-700);padding:.1rem .4rem;border-radius:3px}
+.content pre{background:var(--pet-900);color:#DCEEEB;padding:1.1rem 1.3rem;border-radius:6px;overflow-x:auto;font-size:.85rem;line-height:1.5}
+.content pre code{background:none;color:inherit;padding:0}
+.content table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+.content th,.content td{padding:.5rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
+.content thead th{background:var(--pet);color:#fff;font-weight:600}
+.content tbody tr:nth-child(even){background:var(--soft)}
+.content hr{border:none;border-top:1px solid var(--line);margin:2rem 0}
+.content em{color:var(--muted)}
+.foot{background:var(--pet);color:#A9CFC9;padding:1.3rem 2rem;font-size:.82rem;text-align:center;line-height:1.5}
+.foot strong{color:#fff}
+@media(max-width:600px){.content{padding:1.3rem}.hero{padding:1.6rem 1.3rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <p class="hero__eyebrow">Unidad de Bioestadística · CESFAM Tongoy · 2026</p>
+    <h1 class="hero__title">Guía de uso del Dashboard de Indicadores</h1>
+    <p class="hero__sub">Metas Sanitarias (Ley 19.813) e IAAPS (COMGES 1.12), calculadas directamente desde los REM.</p>
+    <div class="hero__links">
+      <a class="hero__link" href="index.html">Abrir el dashboard →</a>
+      <a class="hero__link hero__link--ghost" href="presentacion_dashboard.html">Ver la presentación</a>
+    </div>
+  </header>
+  <main class="content">
+<h3 id="metas-sanitarias-ley-19813-e-iaaps-comges-112">Metas Sanitarias (Ley 19.813) e IAAPS (COMGES 1.12)</h3>
+<p>Sistema que calcula los indicadores <strong>directamente desde los REM</strong> (Registros
+Estadísticos Mensuales) del establecimiento y del per cápita FONASA, replicando
+el método de corte de DESAM Coquimbo. Consolida <strong>CESFAM Tongoy (105321)</strong> +
+<strong>P.S.R. Guanaqueros (105405)</strong>.</p>
+<hr />
+<h2 id="1-que-necesita-instalado-una-sola-vez">1. Qué necesita instalado (una sola vez)</h2>
+<ul>
+<li><strong>Python 3</strong> — descárguelo de https://www.python.org
+  Durante la instalación, <strong>marque la casilla "Add Python to PATH"</strong>.</li>
+<li>La librería <code>openpyxl</code> se instala sola la primera vez que corre el <code>.bat</code>.</li>
+</ul>
+<p>No necesita internet, ni servidor, ni cuenta. Todo ocurre en su computador.</p>
+<hr />
+<h2 id="2-actualizacion-mensual-el-uso-normal">2. Actualización mensual (el uso normal)</h2>
+<p><strong>Paso 1.</strong> Dentro de la carpeta del sistema hay una carpeta llamada <code>REM_2026</code>.
+Deje ahí los REM del mes, tal como los descarga, sin renombrar:</p>
+<pre><code>REM_2026/
+├── 105321A01.xlsm  … 105321A08.xlsm   (Serie A, Tongoy, un archivo por mes)
+├── 105405A01.xlsm  … 105405A08.xlsm   (Serie A, Guanaqueros)
+├── 105321P06.xlsm  y  105405P06.xlsm  (Serie P, censo de junio)
+└── Percapita_Tongoy_2026.xlsx         (per cápita FONASA del año)
+</code></pre>
+<p>Puede tener los REM en subcarpetas (ej. <code>Tongoy 105321/</code>); el sistema los
+encuentra igual.</p>
+<p><strong>Paso 2.</strong> Doble clic en <strong><code>ACTUALIZAR.bat</code></strong>.
+El sistema lee los archivos, verifica cada celda, calcula todos los indicadores
+y abre el dashboard.</p>
+<p><strong>Paso 3.</strong> Antes de publicar, revise la pestaña <strong>VALIDACIÓN</strong> del dashboard:
+- que los archivos leídos sean los correctos,
+- que no haya alertas en rojo,
+- que las diferencias con DESAM (si las hay) tengan explicación.</p>
+<p>Eso es todo. No se transcribe ninguna cifra a mano.</p>
+<hr />
+<h2 id="3-publicar-en-la-web-github-pages">3. Publicar en la web (GitHub Pages)</h2>
+<p>El <code>.bat</code> deja una copia lista llamada <strong><code>index.html</code></strong>. Súbala a su
+repositorio (junto a <code>presentacion_dashboard.html</code> si quiere actualizar también
+la presentación). La página queda en:
+<code>https://ismaelvasquezl.github.io/Dashboard_indicadores_CESFAM_Tongoy/</code></p>
+<hr />
+<h2 id="4-cambio-de-ano-una-vez-al-ano">4. Cambio de año (una vez al año)</h2>
+<p>Los REM cambian de formato entre años y las filas se mueven. Para que el sistema
+siga encontrando cada dato:</p>
+<p><strong>Paso 1.</strong> Cree una carpeta <code>REM_2027</code> (con el año que corresponda) y deje ahí
+los REM del año nuevo.</p>
+<p><strong>Paso 2.</strong> Doble clic en <strong><code>MAPEAR_NUEVO_ANIO.bat</code></strong>. Escriba el año nuevo
+(2027) y el año base a comparar (2026).</p>
+<p><strong>Paso 3.</strong> El sistema busca cada dato por su <strong>etiqueta de fila</strong> (no por su
+posición) y le muestra un informe:
+- <code>SIN_CAMBIO</code> — la fila sigue en el mismo lugar.
+- <code>PROPUESTO</code> — la fila se movió; el sistema propone la nueva posición.
+- <code>NO_ENCONTRADA</code> — la etiqueta cambió; hay que revisarla a mano.</p>
+<p>Nada se aplica solo. Usted revisa y confirma.</p>
+<p><strong>Paso 4.</strong> Si cambian las <strong>metas</strong> del año, edítelas en
+<code>config/indicadores_2026.json</code> (cree la versión del año nuevo). Están marcadas
+como valores editables.</p>
+<hr />
+<h2 id="5-como-se-calcula-cada-indicador">5. Cómo se calcula cada indicador</h2>
+<p>Cada indicador se calcula así:</p>
+<ul>
+<li><strong>Numerador y denominador</strong> salen de las celdas REM exactas (ver pestaña
+  CATÁLOGO REM del dashboard, con la fórmula y la fila de origen de cada dato).</li>
+<li><strong>Cumplimiento al corte</strong> replica el método DESAM: la meta anual se prorratea
+  al mes de corte y se compara con lo realizado acumulado, con tope en 100%.</li>
+<li><strong>Estado</strong>: cumple ≥ 90% al corte · bajo meta 60–89,9% · crítico &lt; 60%.
+  (Editable en <code>config/indicadores_2026.json</code>.)</li>
+</ul>
+<p>Los indicadores de cobertura crónica (DM2, HTA, Asma+EPOC) usan denominador por
+<strong>prevalencia FONASA</strong> (tramos etarios del per cápita). Los de salud mental usan
+la población bajo control del censo P6 más el movimiento del mes.</p>
+<p><strong>Dos casos que conviene saber:</strong>
+- DESAM informa algunos indicadores (LME, ingreso de embarazo) <strong>solo con
+  Tongoy</strong>. Este sistema los <strong>consolida</strong> con Guanaqueros, así que pueden diferir
+  levemente de la cifra comunal. La pestaña VALIDACIÓN lo explica caso por caso.
+- La <strong>Meta II</strong> (cáncer cervicouterino) aparece como <em>pendiente</em>: los cortes
+  DESAM recibidos no traen su fórmula oficial.</p>
+<hr />
+<h2 id="6-estructura-de-archivos">6. Estructura de archivos</h2>
+<pre><code>Dashboard_Tongoy/
+├── ACTUALIZAR.bat              ← doble clic cada mes
+├── MAPEAR_NUEVO_ANIO.bat       ← doble clic al cambiar de año
+├── dashboard.html              ← el tablero (se regenera solo)
+├── index.html                  ← copia para publicar en la web
+├── presentacion_dashboard.html ← presentación del proyecto
+├── REM_2026/                   ← deje aquí los REM y el per cápita
+├── config/                     ← metas, prevalencias, mapa de celdas (editable)
+│   ├── indicadores_2026.json
+│   ├── mapa_rem_2026.json
+│   └── ...
+├── datos/                      ← resultados y registros (se regeneran)
+│   ├── validacion.json
+│   ├── REGISTRO_REVISION_CATALOGO_REM.md
+│   └── ...
+└── (scripts .py)               ← el motor; no hace falta tocarlos
+</code></pre>
+<hr />
+<h2 id="7-si-algo-sale-mal">7. Si algo sale mal</h2>
+<ul>
+<li><strong>"No se encontró Python"</strong> → instálelo y marque "Add Python to PATH".</li>
+<li><strong>"No existe la carpeta REM_2026"</strong> → créela junto al <code>.bat</code> y deje ahí los REM.</li>
+<li><strong>"Falta 105405A08.xlsm"</strong> → falta un REM de un mes; agréguelo a la carpeta.</li>
+<li><strong>Un archivo con el contenido que no coincide con su nombre</strong> → revise que no
+  haya guardado, por ejemplo, el REM de julio con el nombre de agosto.</li>
+<li>El contenedor de cálculo es su propio PC: si borra un script, vuelva a
+  descomprimir el paquete original.</li>
+</ul>
+
+  </main>
+  <footer class="foot">
+    <strong>CESFAM Tongoy · Unidad de Bioestadística · 2026</strong><br>
+    Datos oficiales DESAM Coquimbo · el sistema aporta el ordenamiento, el cálculo reproducible y la trazabilidad REM.
+  </footer>
+</div>
+</body>
+</html>
