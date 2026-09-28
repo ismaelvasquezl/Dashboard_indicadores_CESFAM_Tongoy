@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard de Seguimiento · Metas Sanitarias e IAAPS · CESFAM Tongoy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:'Lexend',system-ui,sans-serif;
+  --font-label:'Lexend',system-ui,sans-serif;
+  --font-body:'Lexend',system-ui,sans-serif;
+  --font-mono:'Atkinson Hyperlegible',system-ui,sans-serif;
+
+  /* Marca / estructura — azul pizarra clínico */
+  --c-brand:#22303A;
+  --c-brand-700:#2C3E4B;
+  --c-brand-300:#5A6B77;
+
+  /* Neutros cálidos para lectura prolongada */
+  --c-fg:#1E272E;            /* texto principal */
+  --c-bg:#FFFFFF;
+  --c-text:#3D4852;
+  --c-muted:#6B7680;
+  --c-line:#DBE1E4;
+  --c-line-strong:#22303A;
+  --c-soft:#F5F6F4;          /* fondo cálido neutro */
+  --c-card:#EAECEA;
+  --c-page:#E6E8E5;          /* fondo de página, verde-gris muy tenue */
+
+  /* Estados — semáforo sanitario institucional */
+  --c-ok:#1B6B45;            /* verde: cumple */
+  --c-ok-bg:#E4F0EA;
+  --c-ok-line:#B4D8C6;
+  --c-warn:#9A6400;          /* ámbar: bajo meta */
+  --c-warn-bg:#F8EEDB;
+  --c-warn-line:#E4CE9E;
+  --c-crit:#9E2B25;          /* rojo contenido: crítico */
+  --c-crit-bg:#F6E3E1;
+  --c-crit-line:#E0B4B0;
+  --c-none:#8A949C;          /* sin dato */
+  --c-none-bg:#F0F1F0;
+
+  --text-xs:.72rem; --text-sm:.82rem; --text-base:.95rem; --text-md:1.1rem;
+  --text-lg:1.35rem; --text-xl:1.95rem; --text-2xl:2.7rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);color:var(--c-fg);background:var(--c-page);line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1280px;margin:0 auto;background:var(--c-bg);min-height:100vh;box-shadow:0 0 40px rgba(34,48,58,.08)}
+img,svg{max-width:100%}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+/* Header */
+.dash-head{background:var(--c-brand);color:#fff;padding:1.4rem 1.6rem;background-image:linear-gradient(160deg,var(--c-brand) 0%,var(--c-brand-700) 100%)}
+.dash-head__eyebrow{font-family:var(--font-label);letter-spacing:.25em;font-size:var(--text-sm);color:#9FB2BD;text-transform:uppercase;font-weight:600}
+.dash-head__title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:900;line-height:1;margin:.15rem 0;letter-spacing:-.01em}
+.dash-head__sub{font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-md);color:#C6D2D8;text-transform:uppercase;font-weight:600}
+.dash-head__meta{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:.8rem;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.15);font-size:var(--text-xs);color:#A9BAC4;letter-spacing:.05em;text-transform:uppercase}
+
+/* Tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:0;background:var(--c-brand-700);position:sticky;top:0;z-index:20}
+.tab{font-family:var(--font-label);letter-spacing:.1em;font-size:var(--text-md);text-transform:uppercase;color:#9FB2BD;background:transparent;border:none;padding:.7rem 1.3rem;cursor:pointer;border-bottom:3px solid transparent;font-weight:600}
+.tab:hover{color:#fff;background:rgba(255,255,255,.05)}
+.tab.is-active{color:#fff;border-bottom-color:#fff}
+
+/* Panels */
+.panel{display:none;padding:1.4rem 1.6rem}
+.panel.is-active{display:block}
+.section-title{font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-lg);text-transform:uppercase;margin:0 0 .3rem;padding-bottom:.3rem;border-bottom:2px solid var(--c-brand);color:var(--c-brand);font-weight:700}
+.section-desc{font-size:var(--text-sm);color:var(--c-muted);margin-bottom:1rem;max-width:75ch}
+
+/* Resumen KPIs */
+.kpi-row{display:grid;grid-template-columns:1fr;gap:.7rem;margin-bottom:1.4rem}
+@media(min-width:560px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.kpi-row{grid-template-columns:repeat(4,1fr)}}
+.kpi{border:1px solid var(--c-line);border-top:4px solid var(--c-brand);padding:.85rem 1rem;background:var(--c-bg);border-radius:2px}
+.kpi--dark{background:var(--c-brand);color:#fff;border-top-color:var(--c-brand)}
+.kpi--ok{border-top-color:var(--c-ok)}
+.kpi--warn{border-top-color:var(--c-warn)}
+.kpi--crit{border-top-color:var(--c-crit)}
+.kpi__tag{font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-sm);color:var(--c-muted);text-transform:uppercase;font-weight:600}
+.kpi--dark .kpi__tag{color:#9FB2BD}
+.kpi__num{font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;line-height:1;margin:.2rem 0;font-variant-numeric:tabular-nums}
+.kpi--ok .kpi__num{color:var(--c-ok)}
+.kpi--warn .kpi__num{color:var(--c-warn)}
+.kpi--crit .kpi__num{color:var(--c-crit)}
+.kpi__cap{font-size:var(--text-xs);color:var(--c-muted);text-transform:uppercase;letter-spacing:.04em}
+.kpi--dark .kpi__cap{color:#C6D2D8}
+
+/* Small multiples grid */
+.sm-grid{display:grid;grid-template-columns:1fr;gap:.7rem}
+@media(min-width:600px){.sm-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:960px){.sm-grid{grid-template-columns:repeat(3,1fr)}}
+.sm-card{border:1px solid var(--c-line);border-left:4px solid var(--c-none);padding:.75rem .85rem;display:flex;flex-direction:column;gap:.4rem;cursor:pointer;background:var(--c-bg);transition:box-shadow .14s,transform .14s;border-radius:2px}
+.sm-card:hover{box-shadow:0 4px 14px rgba(34,48,58,.13);transform:translateY(-2px)}
+.sm-card:focus-visible{outline:3px solid var(--c-brand);outline-offset:2px}
+.sm-card--cumple{border-left-color:var(--c-ok)}
+.sm-card--bajo{border-left-color:var(--c-warn)}
+.sm-card--critico{border-left-color:var(--c-crit)}
+.sm-card--sindato{border-left-color:var(--c-none);border-left-style:dashed}
+.sm-card__head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+.sm-card__code{font-family:var(--font-label);letter-spacing:.08em;font-size:var(--text-md);color:var(--c-brand-300);font-weight:600}
+.sm-card__badge{font-family:var(--font-label);letter-spacing:.06em;font-size:var(--text-sm);padding:.12rem .5rem;text-transform:uppercase;font-weight:600;border-radius:2px}
+.badge-cumple{background:var(--c-ok-bg);color:var(--c-ok);border:1px solid var(--c-ok-line)}
+.badge-bajo{background:var(--c-warn-bg);color:var(--c-warn);border:1px solid var(--c-warn-line)}
+.badge-critico{background:var(--c-crit);color:#fff}
+.badge-sindato{background:var(--c-none-bg);color:var(--c-muted);border:1px dashed var(--c-none)}
+.sm-card__name{font-size:var(--text-sm);font-weight:700;letter-spacing:.005em;line-height:1.2;min-height:2.3em;color:var(--c-fg)}
+.sm-card__val{display:flex;align-items:baseline;gap:.5rem}
+.sm-card__pct{font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;line-height:.9;font-variant-numeric:tabular-nums}
+.sm-card--cumple .sm-card__pct{color:var(--c-ok)}
+.sm-card--bajo .sm-card__pct{color:var(--c-warn)}
+.sm-card--critico .sm-card__pct{color:var(--c-crit)}
+.sm-card__trend{font-family:var(--font-label);letter-spacing:.04em;font-size:var(--text-md);font-weight:600;color:var(--c-muted)}
+.sm-card__spark{width:100%;height:46px;display:block}
+.sm-card__foot{font-size:var(--text-xs);color:var(--c-muted);display:flex;justify-content:space-between;gap:.5rem;font-variant-numeric:tabular-nums}
+
+/* Detalle indicador (modal) */
+.overlay{position:fixed;inset:0;background:rgba(10,10,10,.7);display:none;z-index:50;padding:1rem;overflow-y:auto}
+.overlay.is-open{display:flex;align-items:flex-start;justify-content:center}
+.detail{background:var(--c-bg);max-width:920px;width:100%;margin:1rem auto;border-radius:4px;overflow:hidden;box-shadow:0 20px 60px rgba(34,48,58,.4)}
+.detail__head{background:var(--c-brand);color:#fff;padding:1.05rem 1.3rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;position:sticky;top:0;background-image:linear-gradient(160deg,var(--c-brand),var(--c-brand-700))}
+.detail__code{font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-md);color:#9FB2BD;text-transform:uppercase;font-weight:600}
+.detail__title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:800;line-height:1.05;margin:.15rem 0 0}
+.detail__close{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);font-family:var(--font-label);letter-spacing:.08em;font-size:var(--text-md);padding:.3rem .8rem;cursor:pointer;text-transform:uppercase;flex-shrink:0;border-radius:2px;font-weight:600}
+.detail__close:hover{background:rgba(255,255,255,.25)}
+.detail__body{padding:1.3rem}
+.detail__chart{width:100%;height:260px;border:1px solid var(--c-line);border-radius:3px;margin-bottom:1.2rem;background:var(--c-bg)}
+
+/* Construcción numerador/denominador */
+.build{display:grid;grid-template-columns:1fr;gap:.8rem;margin-bottom:1.2rem}
+@media(min-width:640px){.build{grid-template-columns:1fr auto 1fr;align-items:stretch}}
+.build__box{border:1px solid var(--c-line);padding:.9rem 1rem;display:flex;flex-direction:column;gap:.4rem;border-radius:3px}
+.build__box--num{background:var(--c-ok-bg);border-color:var(--c-ok-line);border-top:4px solid var(--c-ok)}
+.build__box--den{background:var(--c-brand);color:#fff;border-color:var(--c-brand);border-top:4px solid var(--c-brand-300)}
+.build__lbl{font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-md);text-transform:uppercase;color:var(--c-muted);font-weight:600}
+.build__box--num .build__lbl{color:var(--c-ok)}
+.build__box--den .build__lbl{color:#9FB2BD}
+.build__val{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:800;line-height:.85;font-variant-numeric:tabular-nums}
+.build__box--num .build__val{color:var(--c-ok)}
+.build__desc{font-size:var(--text-sm);line-height:1.35}
+.build__src{margin-top:.3rem;padding-top:.4rem;border-top:1px solid rgba(0,0,0,.12)}
+.build__box--den .build__src{border-top-color:rgba(255,255,255,.2)}
+.build__src-tag{font-family:var(--font-label);letter-spacing:.08em;font-size:var(--text-xs);text-transform:uppercase;color:var(--c-muted);display:block;margin-bottom:.2rem;font-weight:600}
+.build__box--den .build__src-tag{color:#9FB2BD}
+.build__cell{font-family:var(--font-mono);font-size:var(--text-xs);background:var(--c-brand);color:#fff;padding:.15rem .4rem;display:inline-block;word-break:break-word;line-height:1.5;border-radius:2px}
+.build__box--den .build__cell{background:rgba(255,255,255,.15)}
+.build__op{display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:var(--text-2xl);color:var(--c-brand-300);padding:.3rem;font-weight:800}
+@media(max-width:639px){.build__op{transform:rotate(90deg)}}
+.build__result{border:2px solid var(--c-brand);background:var(--c-brand);color:#fff;padding:.85rem 1rem;text-align:center;margin-bottom:1.2rem;border-radius:3px}
+.build__result-lbl{font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-md);color:#9FB2BD;text-transform:uppercase;font-weight:600}
+.build__result-formula{font-family:var(--font-mono);font-size:var(--text-sm);margin:.3rem 0;color:#E4EAED}
+.build__meta{border:2px solid var(--c-brand);background:#fff;padding:.85rem 1rem;text-align:center;margin-bottom:1.2rem;border-radius:3px}
+.build__meta .build__result-formula{color:var(--c-text)}
+.build__meta .build__result-lbl{color:var(--c-brand-300)}
+.build__meta .build__result-val{color:var(--c-brand)}
+.build__result{margin-bottom:.6rem!important}
+.build__result-val{font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;font-variant-numeric:tabular-nums}
+
+/* Tabla corte a corte */
+.matrix{width:100%;border-collapse:collapse;font-size:var(--text-sm);margin-top:.5rem}
+.matrix th,.matrix td{padding:.45rem .55rem;text-align:right;border-bottom:1px solid var(--c-line);font-variant-numeric:tabular-nums;white-space:nowrap}
+.matrix th:first-child,.matrix td:first-child{text-align:left}
+.matrix thead th{background:var(--c-brand);color:#fff;font-family:var(--font-label);letter-spacing:.05em;font-weight:600;font-size:var(--text-sm)}
+.matrix tbody th{font-weight:700;font-size:var(--text-xs);color:var(--c-brand)}
+.matrix tbody tr:hover{background:var(--c-soft)}
+.matrix .delta-up{color:var(--c-ok);font-weight:700}
+.matrix .delta-down{color:var(--c-crit);font-weight:700}
+.tbl-scroll{overflow-x:auto;margin:0 -.3rem}
+
+/* Notas y leyenda */
+.note-inline{font-size:var(--text-xs);color:var(--c-text);font-style:italic;margin-top:.5rem;padding:.55rem .75rem;background:var(--c-warn-bg);border-left:3px solid var(--c-warn);border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;font-size:var(--text-xs);align-items:center;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--c-line);color:var(--c-muted)}
+.legend-item{display:inline-flex;align-items:center;gap:.3rem}
+.legend-box{width:.8rem;height:.8rem;border:1px solid var(--c-fg);display:inline-block}
+
+/* Catálogo REM */
+.rem-table{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+.rem-table th,.rem-table td{padding:.5rem .6rem;border:1px solid var(--c-line);vertical-align:top;text-align:left}
+.rem-table thead th{background:var(--c-brand);color:#fff;font-family:var(--font-label);letter-spacing:.06em;font-weight:600;font-size:var(--text-sm);position:sticky;top:44px}
+.rem-table tbody tr:nth-child(even){background:var(--c-soft)}
+.rem-table .cod{font-family:var(--font-label);letter-spacing:.06em;font-size:var(--text-md);color:var(--c-brand);font-weight:600}
+.rem-table .cell{font-family:var(--font-mono);font-size:.68rem;background:var(--c-brand);color:#fff;padding:.12rem .35rem;display:inline-block;word-break:break-word;border-radius:2px}
+.rem-group-head td{background:var(--c-brand-700);color:#fff;font-family:var(--font-label);letter-spacing:.12em;font-size:var(--text-md);padding:.55rem .6rem;text-transform:uppercase;font-weight:700}
+
+/* Footer */
+.dash-foot{background:var(--c-brand);color:#A9BAC4;padding:1.1rem 1.6rem;font-size:var(--text-xs);letter-spacing:.05em;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.6rem 1.4rem;text-transform:uppercase}
+.dash-foot__mark{font-family:var(--font-label);letter-spacing:.15em;color:#fff;font-size:var(--text-md);font-weight:600}
+
+/* Proyección */
+.proj-note{font-size:var(--text-xs);color:var(--c-muted);font-style:italic;margin-top:.4rem}
+.proj-dot{fill:none;stroke:var(--c-muted);stroke-width:1.5;stroke-dasharray:3 2}
+
+/* ===== Impresión por secciones (sutil) ===== */
+.print-only{display:none}
+.panel{position:relative}
+.panel > .section-title:first-of-type{padding-right:8.5rem}
+.panel-tools{position:absolute;top:0;right:0;z-index:3;display:flex;gap:.4rem}
+.print-btn{display:inline-flex;align-items:center;gap:.42rem;font-family:var(--font-body);font-size:.78rem;font-weight:600;color:var(--c-muted);background:var(--c-bg);border:1px solid var(--c-line);border-radius:6px;padding:.34rem .68rem;cursor:pointer;line-height:1;transition:color .14s,border-color .14s,background .14s}
+.print-btn:hover{color:var(--c-brand);border-color:var(--c-brand-300);background:var(--c-soft)}
+.print-btn:focus-visible{outline:3px solid var(--c-brand);outline-offset:2px}
+.print-btn svg{width:15px;height:15px;flex:none;stroke:currentColor}
+.detail__print{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);font-family:var(--font-body);font-size:.85rem;font-weight:600;padding:.3rem .7rem;cursor:pointer;border-radius:3px;flex:none}
+.detail__print:hover{background:rgba(255,255,255,.28)}
+.detail__print svg{width:15px;height:15px;stroke:currentColor}
+@media(max-width:560px){
+  .panel > .section-title:first-of-type{padding-right:3.2rem}
+  .print-btn__label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .print-btn{padding:.42rem}
+}
+@media print{
+  @page{size:A4;margin:14mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff}
+  .wrap{box-shadow:none;max-width:none;margin:0}
+  .dash-head,.tabs,.dash-foot,.panel-tools,.print-btn,.detail__close,.detail__print{display:none !important}
+  .panel > .section-title:first-of-type{padding-right:0}
+  .print-head{display:block !important;border-bottom:2px solid var(--c-brand);padding-bottom:9px;margin-bottom:16px}
+  .print-head__t{font-family:var(--font-display);font-weight:800;font-size:1.4rem;color:var(--c-brand);margin:0}
+  .print-head__meta{font-size:.8rem;color:var(--c-text);margin-top:3px;display:flex;flex-wrap:wrap;gap:.2rem 1.1rem}
+  .print-head__meta b{color:var(--c-brand)}
+  /* imprimir solo la sección pedida; sin data-print imprime la activa */
+  body[data-print] .panel{display:none !important}
+  body[data-print="resumen"] #panel-resumen,
+  body[data-print="mmss"] #panel-mmss,
+  body[data-print="iaaps"] #panel-iaaps,
+  body[data-print="matriz"] #panel-matriz,
+  body[data-print="rem"] #panel-rem,
+  body[data-print="val"] #panel-val{display:block !important}
+  .panel{padding:0}
+  .tbl-scroll{overflow:visible !important}
+  .sm-grid{grid-template-columns:repeat(2,1fr) !important;gap:.5rem}
+  .kpi-row{grid-template-columns:repeat(4,1fr) !important}
+  .sm-card,.kpi,.rem-table tr,.matrix tr,.build__box{break-inside:avoid}
+  .rem-table thead th,.matrix thead th{position:static}
+  a{text-decoration:none;color:#000}
+  /* modal: imprimir solo el detalle del indicador */
+  body.printing-detail .wrap{display:none !important}
+  body.printing-detail .print-head{display:block !important;margin-bottom:12px}
+  body.printing-detail .overlay{position:static;display:block !important;background:#fff;padding:0;overflow:visible}
+  body.printing-detail .detail{box-shadow:none;max-width:none;margin:0;border-radius:0}
+  body.printing-detail .detail__body{padding:0;padding-top:12px}
+  body.printing-detail .detail__chart{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="print-only print-head" id="print-head" aria-hidden="true"></div>
+<div class="wrap">
+
+  <header class="dash-head">
+    <p class="dash-head__eyebrow">Unidad de Bioestadística · Seguimiento longitudinal</p>
+    <h1 class="dash-head__title">Dashboard de Indicadores</h1>
+    <p class="dash-head__sub">CESFAM Tongoy · Metas Sanitarias e IAAPS · 2026</p>
+    <div class="dash-head__meta">
+      <span id="meta-generado"></span>
+      <span id="meta-cortes"></span>
+      <span>Ley 19.813 · COMGES 1.12 · Marco MAIS</span>
+      <span>DEIS 105321 + P.S.R. Guanaqueros</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Secciones del dashboard">
+    <button class="tab is-active" role="tab" data-panel="resumen">Resumen</button>
+    <button class="tab" role="tab" data-panel="mmss">Metas Sanitarias</button>
+    <button class="tab" role="tab" data-panel="iaaps">IAAPS</button>
+    <button class="tab" role="tab" data-panel="matriz">Corte a corte</button>
+    <button class="tab" role="tab" data-panel="rem">Catálogo REM</button>
+    <button class="tab" role="tab" data-panel="val">Validación</button>
+  </nav>
+
+  <!-- RESUMEN -->
+  <section class="panel is-active" id="panel-resumen" role="tabpanel">
+    <h2 class="section-title">Panorama al último corte</h2>
+    <p class="section-desc">Vista general del estado y la tendencia de todos los indicadores. Cada tarjeta muestra la miniatura de su evolución (sparkline). Haz clic en cualquier indicador de las pestañas MMSS o IAAPS para ver cómo se construye desde el REM.</p>
+    <div class="kpi-row" id="kpi-resumen"></div>
+    <h3 class="section-title" style="font-size:var(--text-md);margin-top:1.5rem">Distribución por estado · último corte</h3>
+    <div id="dist-estado"></div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-box" style="background:#1B6B45"></span>Cumple</span>
+      <span class="legend-item"><span class="legend-box" style="background:#9A6400"></span>Bajo meta</span>
+      <span class="legend-item"><span class="legend-box" style="background:#9E2B25"></span>Crítico</span>
+      <span class="legend-item"><span class="legend-box" style="background:#E0E3E0;border-style:dashed"></span>Sin dato / pendiente</span>
+      <span class="legend-item">▲ mejora · ▬ estable · ▼ retroceso</span>
+    </div>
+  </section>
+
+  <!-- MMSS -->
+  <section class="panel" id="panel-mmss" role="tabpanel">
+    <h2 class="section-title">Metas Sanitarias · Ley 19.813</h2>
+    <p class="section-desc">Serie por corte de cada meta. La miniatura muestra la trayectoria; la línea punteada horizontal es el umbral de la meta. Clic para ver construcción REM, proyección y detalle corte a corte.</p>
+    <div class="sm-grid" id="grid-mmss"></div>
+  </section>
+
+  <!-- IAAPS -->
+  <section class="panel" id="panel-iaaps" role="tabpanel">
+    <h2 class="section-title">IAAPS · COMGES N° 1.12</h2>
+    <p class="section-desc">Índice de Actividad de la APS. 17 indicadores con seguimiento por corte. M4 Resolutividad tiene polaridad inversa (meta ≤ 10%): en su caso, valores bajos son favorables.</p>
+    <div class="sm-grid" id="grid-iaaps"></div>
+  </section>
+
+  <!-- MATRIZ corte a corte -->
+  <section class="panel" id="panel-matriz" role="tabpanel">
+    <h2 class="section-title">Matriz corte a corte</h2>
+    <p class="section-desc">Todos los indicadores × todos los cortes. El valor es el % de cumplimiento al corte. La flecha indica el cambio respecto al corte anterior.</p>
+    <h3 class="section-title" style="font-size:var(--text-md);margin-top:1rem">Metas Sanitarias</h3>
+    <div class="tbl-scroll"><div id="matriz-mmss"></div></div>
+    <h3 class="section-title" style="font-size:var(--text-md);margin-top:1.5rem">IAAPS</h3>
+    <div class="tbl-scroll"><div id="matriz-iaaps"></div></div>
+  </section>
+
+  <!-- CATÁLOGO REM -->
+  <section class="panel" id="panel-rem" role="tabpanel">
+    <h2 class="section-title">Catálogo de procedencia REM</h2>
+    <p class="section-desc">Trazabilidad completa: de dónde sale cada indicador. Numerador, denominador, series y celdas REM exactas. Esta es la referencia de auditoría para la Unidad Técnica.</p>
+    <div class="tbl-scroll"><div id="rem-catalogo"></div></div>
+  </section>
+
+  <section class="panel" id="panel-val" role="tabpanel">
+    <h2 class="section-title">Validación de la actualización</h2>
+    <p class="section-desc">Control de calidad de cada ejecución: archivos leídos, anclas de etiquetas REM, alertas y contraste contra las cifras publicadas por DESAM (testigo independiente). Toda diferencia debe tener explicación.</p>
+    <div id="val-body"></div>
+  </section>
+
+  <footer class="dash-foot">
+    <span class="dash-foot__mark">CESFAM TONGOY · UNIDAD DE BIOESTADÍSTICA</span>
+    <span>Fuente: REM Serie A/P · DEIS · FONASA</span>
+    <span id="foot-nota">Calculado desde REM 105321 + 105405 y per cápita · histórico y contraste DESAM Coquimbo</span>
+  </footer>
+
+</div>
+
+<!-- OVERLAY DETALLE -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+  <div class="detail" id="detail"></div>
+</div>
+
+<script>
+const DATA = {"indcfg": {"I": {"tipo": "ingreso_mensual", "tasa": false}, "II": {"tipo": "pendiente", "tasa": false}, "IIIA": {"tipo": "anual", "tasa": false}, "IIIB": {"tipo": "anual", "tasa": false}, "IVA": {"tipo": "semestral", "tasa": false}, "IVB": {"tipo": "semestral", "tasa": false}, "V": {"tipo": "semestral", "tasa": false}, "VI": {"tipo": "ingreso_mensual", "tasa": false}, "VII": {"tipo": "semestral", "tasa": false}, "M3": {"tipo": "anual", "tasa": true}, "M4": {"tipo": "ingreso_mensual", "tasa": false}, "M5": {"tipo": "anual", "tasa": true}, "M61A": {"tipo": "anual", "tasa": false}, "M61B": {"tipo": "anual", "tasa": false}, "M62": {"tipo": "anual", "tasa": false}, "M7": {"tipo": "anual", "tasa": false}, "M8": {"tipo": "anual", "tasa": false}, "M91": {"tipo": "cobertura", "tasa": false}, "M92": {"tipo": "anual", "tasa": true}, "M93": {"tipo": "anual", "tasa": false}, "M12": {"tipo": "ingreso_mensual", "tasa": false}, "M13": {"tipo": "semestral", "tasa": false}, "M14": {"tipo": "semestral", "tasa": false}, "M15": {"tipo": "semestral", "tasa": false}, "M17A": {"tipo": "anual", "tasa": false}, "M17B": {"tipo": "semestral", "tasa": false}}, "umbrales": {"cumple": 90, "bajo": 60, "nota": "Supuesto editable. Al corte >= 90% cumple (criterio de marcado DESAM), 60-89,9% bajo meta, < 60% crítico."}, "validacion": {"generado": "24-09-2026 14:05", "carpeta": "/home/claude/proyecto/REM_2026", "ultimo_mes": "agosto", "mes_P": "junio", "identidad": [["✓", "105321A01.xlsm", "105321", "enero", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A02.xlsm", "105321", "febrero", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A03.xlsm", "105321", "marzo", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A04.xlsm", "105321", "abril", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A05.xlsm", "105321", "mayo", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A06.xlsm", "105321", "junio", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A07.xlsm", "105321", "julio", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321A08.xlsm", "105321", "agosto", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105321P06.xlsm", "105321", "junio", 2026, "Versión 1.2: Junio 2026", ""], ["✓", "105405A01.xlsm", "105405", "enero", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A02.xlsm", "105405", "febrero", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A03.xlsm", "105405", "marzo", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A04.xlsm", "105405", "abril", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A05.xlsm", "105405", "mayo", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A06.xlsm", "105405", "junio", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A07.xlsm", "105405", "julio", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405A08.xlsm", "105405", "agosto", 2026, "Versión 1.2: Febrero 2026", ""], ["✓", "105405P06.xlsm", "105405", "junio", 2026, "Versión 1.2: Junio 2026", ""]], "anclas": [], "alertas": [], "percapita": {"total": 11273, "familias": 3416.0606060606065, "mujeres_20_64": 3422, "hombres_20_64": 3463, "65+": 1796, "10-19": 1551, "15-19": 744, "0-9": 1041, "6": 100, "<3": 236, "prev_dm2": 1311.258, "prev_hta": 2978.5250000000005, "prev_asma_epoc": 1715.7269999999999, "prev_sm": 2480.06}, "comparacion": [["I", "marzo", 12.3, 12.3], ["I", "abril", 24.7, 24.7], ["I", "mayo", 22.2, 22.2], ["I", "junio", 22.2, 22.2], ["IIIA", "marzo", 100, 100.0], ["IIIA", "abril", 100, 100.0], ["IIIA", "mayo", 100, 100.0], ["IIIA", "junio", 100, 100.0], ["IIIA", "julio", 100, 100.0], ["IIIB", "marzo", 100, 100.0], ["IIIB", "abril", 100, 100.0], ["IIIB", "mayo", 100, 100.0], ["IIIB", "junio", 100.0, 100.0], ["IIIB", "julio", 93.5, 93.5], ["IVA", "junio", 100.0, 128.8], ["IVB", "junio", 78.1, 68.5], ["V", "junio", 96.2, 79.1], ["V", "julio", 96.2, 96.2], ["VI", "marzo", 50.7, 53.0], ["VI", "abril", 55.6, 53.3], ["VI", "mayo", 64.5, 59.5], ["VI", "junio", 63.1, 61.1], ["VI", "julio", 67.5, 66.7], ["VII", "junio", 35.3, 35.3], ["VII", "julio", 35.3, 35.3], ["M3", "abril", 83.7, 83.7], ["M3", "mayo", 90.4, 90.4], ["M3", "julio", 87.5, 87.5], ["M4", "abril", 100.0, 51.2], ["M4", "mayo", 100.0, 51.0], ["M4", "julio", 100.0, 100.0], ["M5", "abril", 100, 100.0], ["M5", "mayo", 100, 92.9], ["M5", "julio", 100, 100.0], ["M61A", "julio", 100, 100.0], ["M61B", "abril", 80.9, 80.9], ["M61B", "mayo", 99.4, 99.4], ["M61B", "julio", 90.7, 90.7], ["M62", "abril", 100, 100.0], ["M62", "mayo", 100, 100.0], ["M62", "julio", 100, 100.0], ["M7", "julio", 100, 100.0], ["M8", "abril", 100, 100.0], ["M8", "mayo", 100, 100.0], ["M8", "julio", 100, 100.0], ["M91", "julio", 267.4, 267.4], ["M92", "julio", 69.2, 69.2], ["M93", "julio", 33.5, 33.5], ["M12", "abril", 76.8, 79.5], ["M12", "mayo", 84.3, 84.8], ["M12", "julio", 90.1, 89.2], ["M13", "julio", 88.7, 88.7], ["M14", "julio", 100, 100.0], ["M15", "julio", 100, 100.0], ["M17A", "abril", 100, 100.0], ["M17A", "mayo", 100, 100.0], ["M17A", "julio", 94.1, 94.1], ["M17B", "julio", 75.5, 94.8]]}, "explicaciones": {"IVA|junio": "DESAM (junio) leyó REM P4 C30+C31: sumó HTA <150/90 con DM2 HbA1c<7%. Filas correctas del formulario 2026: C31+C32. DESAM corrigió la fórmula en julio.", "IVB|junio": "DESAM (junio) leyó REM P4 C61:C64 (una fila corrida) e informó solo Tongoy. Filas correctas: C62:C65; aquí se consolida Tongoy + Guanaqueros.", "V|junio": "DESAM (junio) leyó REM P4 C28+C29 (C28 es encabezado). Filas correctas 2026: C29+C30. DESAM corrigió en julio (96,2%).", "VI|marzo": "DESAM informa LME por establecimiento (Tongoy 53,0%). Aquí se consolida Tongoy + Guanaqueros. Calculado solo con Tongoy coincide exacto.", "VI|abril": "DESAM informa solo Tongoy (53,3%). Aquí se consolida con Guanaqueros. Solo Tongoy coincide exacto.", "VI|mayo": "DESAM informa solo Tongoy (59,5%). Aquí se consolida con Guanaqueros. Solo Tongoy coincide exacto.", "VI|junio": "DESAM informa solo Tongoy (61,1%). Aquí se consolida con Guanaqueros.", "VI|julio": "DESAM informa solo Tongoy (66,7%). Aquí se consolida con Guanaqueros. Solo Tongoy coincide exacto.", "M4|abril": "Mismo dato, distinta presentación: en abril-mayo DESAM mostraba la razón realizado/meta (51%); desde julio muestra 100% cuando se cumple (≤10%). Resolutividad global coincide: 5,12%.", "M4|mayo": "Mismo dato, distinta presentación (ver abril). Resolutividad global coincide: 5,10%.", "M5|mayo": "Los REM se rectificaron después del corte de mayo: DESAM publicó Guanaqueros feb=0 y mar=13 en mayo, y feb=25 y mar=61 en julio. Los archivos actuales coinciden con la versión rectificada.", "M12|abril": "DESAM informa solo Tongoy (79,5%). Aquí se consolida con Guanaqueros. Solo Tongoy coincide exacto.", "M12|mayo": "DESAM informa solo Tongoy (84,8%). Aquí se consolida con Guanaqueros. Solo Tongoy coincide exacto.", "M12|julio": "DESAM informa solo Tongoy (89,2%). Aquí se consolida con Guanaqueros. Solo Tongoy coincide exacto.", "M17B|julio": "DESAM sumó los numeradores de ambos establecimientos (75+19=94) pero usó solo el denominador de Tongoy (161). Consolidado consistente: 94 / 202."}, "generado": "28-09-2026 13:22", "mmss": [{"id": "I", "nombre": "Recuperación DSM 12-23m", "tipo": "ingreso_mensual", "meta_umbral": 90.0, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 12.3, "global": 11.11, "comuna": null, "numerador": 1.0, "denominador": 9.0, "brecha": 7.0, "estado": "critico", "nota": "Denominador incluye 4 diagnósticos oct-dic 2025 (supuesto tomado de DESAM)", "meta_corte": 8.1, "desam": 12.3, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 24.7, "global": 22.22, "comuna": 37.0, "numerador": 2.0, "denominador": 9.0, "brecha": 6.0, "estado": "critico", "nota": "Denominador incluye 4 diagnósticos oct-dic 2025 (supuesto tomado de DESAM)", "meta_corte": 8.1, "desam": 24.7, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 22.2, "global": 20.0, "comuna": 38.6, "numerador": 2.0, "denominador": 10.0, "brecha": 7.0, "estado": "critico", "nota": "Denominador incluye 4 diagnósticos oct-dic 2025 (supuesto tomado de DESAM)", "meta_corte": 9.0, "desam": 22.2, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 22.2, "global": 20.0, "comuna": 50.4, "numerador": 2.0, "denominador": 10.0, "brecha": 7.0, "estado": "critico", "nota": "Denominador incluye 4 diagnósticos oct-dic 2025 (supuesto tomado de DESAM)", "meta_corte": 9.0, "desam": 22.2, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 31.7, "global": 28.57, "comuna": null, "numerador": 4.0, "denominador": 14.0, "brecha": 9.0, "estado": "critico", "nota": "Denominador incluye 4 diagnósticos oct-dic 2025 (supuesto tomado de DESAM)", "meta_corte": 12.6, "desam": null, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 39.7, "global": 35.71, "comuna": null, "numerador": 5.0, "denominador": 14.0, "brecha": 8.0, "estado": "critico", "nota": "Denominador incluye 4 diagnósticos oct-dic 2025 (supuesto tomado de DESAM)", "meta_corte": 12.6, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "mejora", "delta": 8.0, "pendiente": 4.51, "proyeccion": 41.3}, "rem": {"grupo": "MMSS", "codigo": "I", "indicador": "Recuperación DSM 12-23m", "fuente_num": "REM A03", "celda_num": "A03 J26:M26 + A03 J28:M28", "desc_num": "Niños 12-23m con riesgo DSM recuperados (normal o normal con rezago desde riesgo)", "ancla_num": "seccion a.2: resultados de la aplicacion de e › reevaluacion > normal (desde riesgo)", "fuente_den": "REM A03", "celda_den": "A03 J23:M23 - A03 J37:M37 - A03 J40:M40", "desc_den": "Niños 12-23m con riesgo DSM en 1ª evaluación, menos derivados y trasladados (incluye oct-dic año anterior)", "ancla_den": "seccion a.2: resultados de la aplicacion de e › primera evaluacion > riesgo", "meta_umbral": "90%", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}}, {"id": "II", "nombre": "Detección precoz cáncer cervicouterino", "tipo": "pendiente", "meta_umbral": null, "polaridad": "directa", "puntos": [{"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": null, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "sindato", "nota": "Sin fórmula oficial en los cortes recibidos", "meta_corte": null, "desam": null, "fuente": "—"}], "tendencia": {"direccion": "sindato", "delta": null, "pendiente": null, "proyeccion": null}, "rem": {"grupo": "MMSS", "codigo": "II", "indicador": "Detección precoz cáncer cervicouterino", "fuente_num": "—", "celda_num": "Sin fórmula oficial", "desc_num": "Sin fórmula oficial publicada en el corte DESAM", "ancla_num": "", "fuente_den": "—", "celda_den": "—", "desc_den": "Sin fórmula oficial publicada en el corte DESAM", "ancla_den": "", "meta_umbral": "Por definir", "tipo": "Porcentaje", "periodicidad": "Pendiente"}}, {"id": "IIIA", "nombre": "Control odontológico 0-9", "tipo": "anual", "meta_umbral": 48.0, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 16.81, "comuna": null, "numerador": 175.0, "denominador": 1041.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 124.9, "desam": 100.0, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 22.29, "comuna": null, "numerador": 232.0, "denominador": 1041.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 166.6, "desam": 100.0, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 26.99, "comuna": 24.4, "numerador": 281.0, "denominador": 1041.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 208.2, "desam": 100.0, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 30.26, "comuna": 28.1, "numerador": 315.0, "denominador": 1041.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 249.8, "desam": 100.0, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 33.14, "comuna": 31.9, "numerador": 345.0, "denominador": 1041.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 291.5, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 38.62, "comuna": null, "numerador": 402.0, "denominador": 1041.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 333.1, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "MMSS", "codigo": "IIIA", "indicador": "Control odontológico 0-9", "fuente_num": "REM A03", "celda_num": "A03 F208:Y208", "desc_num": "Niños 0-9a en control con enfoque riesgo odontológico y pauta 0 aplicada", "ancla_num": "seccion d.7: aplicacion y resultados de pauta › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 0-9", "desc_den": "Niños inscritos validados de 0 a 9 años", "ancla_den": "", "meta_umbral": "48%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "IIIB", "nombre": "6 años libres de caries", "tipo": "anual", "meta_umbral": 22.0, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 6.0, "comuna": null, "numerador": 6.0, "denominador": 100.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 5.5, "desam": 100.0, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 9.0, "comuna": null, "numerador": 9.0, "denominador": 100.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 7.3, "desam": 100.0, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 10.0, "comuna": 13.7, "numerador": 10.0, "denominador": 100.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 9.2, "desam": 100.0, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 11.0, "comuna": 15.2, "numerador": 11.0, "denominador": 100.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 11.0, "desam": 100.0, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 93.5, "global": 12.0, "comuna": 17.2, "numerador": 12.0, "denominador": 100.0, "brecha": 1.0, "estado": "cumple", "nota": "", "meta_corte": 12.8, "desam": 93.5, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 88.6, "global": 13.0, "comuna": null, "numerador": 13.0, "denominador": 100.0, "brecha": 2.0, "estado": "bajo", "nota": "", "meta_corte": 14.7, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "retroceso", "delta": -4.9, "pendiente": -2.19, "proyeccion": 89.4}, "rem": {"grupo": "MMSS", "codigo": "IIIB", "indicador": "6 años libres de caries", "fuente_num": "REM A09", "celda_num": "A09 S51:T51", "desc_num": "Niños de 6 años con ceod igual a 0 ene-dic", "ancla_num": "seccion c : ingresos y egresos de odontologia › indice ceod o copd (indice ceod se usa en menores de 7 anos, para resto se utili", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos de 6 años", "desc_den": "Niños inscritos validados de 6 años", "ancla_den": "", "meta_umbral": "22%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "IVA", "nombre": "Cobertura efectiva DM2", "tipo": "semestral", "meta_umbral": 27.0, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 27.0, "comuna": 103.3, "numerador": 354.0, "denominador": 1311.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 354.0, "desam": 128.8, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 27.0, "comuna": null, "numerador": 354.0, "denominador": 1311.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 354.0, "desam": null, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 27.0, "comuna": null, "numerador": 354.0, "denominador": 1311.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 354.0, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "MMSS", "codigo": "IVA", "indicador": "Cobertura efectiva DM2", "fuente_num": "REM P4", "celda_num": "P4 C31:C32", "desc_num": "DM2 15-79a con HbA1c menor 7% + DM2 80+ con HbA1c menor 8%", "ancla_num": "seccion b: metas de compensacion › personas bajo control por diabetes mellitus > hba1c<7%", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×1,8% + 25-44×6,3% + 45-64×18,3% + 65+×30,6%", "desc_den": "Personas 15+ con DM2 estimadas según prevalencia", "ancla_den": "", "meta_umbral": "27%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}, {"id": "IVB", "nombre": "Evaluación pies DM2", "tipo": "semestral", "meta_umbral": 80.0, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 78.1, "global": 62.47, "comuna": 76.3, "numerador": 531.0, "denominador": 850.0, "brecha": 149.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 680.0, "desam": 68.5, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 78.1, "global": 62.47, "comuna": null, "numerador": 531.0, "denominador": 850.0, "brecha": 149.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 680.0, "desam": null, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 78.1, "global": 62.47, "comuna": null, "numerador": 531.0, "denominador": 850.0, "brecha": 149.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 680.0, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 78.1}, "rem": {"grupo": "MMSS", "codigo": "IVB", "indicador": "Evaluación pies DM2", "fuente_num": "REM P4", "celda_num": "P4 C62:C65", "desc_num": "DM2 15+ con evaluación de pie vigente últimos 12 meses", "ancla_num": "seccion c: variables de seguimiento del pscv  › con *evaluacion vigente del pie segun pauta de estimacion del riesgo de ulceraci > riesgo bajo", "fuente_den": "REM P4", "celda_den": "P4 C17", "desc_den": "DM2 15+ bajo control últimos 12 meses", "ancla_den": "seccion a: programa salud cardiovascular (psc › personas bajo control segun patologia y factores de riesgo (existencia) > diabetes mellitus tipo 2", "meta_umbral": "80%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}, {"id": "V", "nombre": "Cobertura efectiva HTA", "tipo": "semestral", "meta_umbral": 36.0, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 96.2, "global": 34.61, "comuna": 51.2, "numerador": 1031.0, "denominador": 2979.0, "brecha": 41.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 1072.3, "desam": 79.1, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 96.2, "global": 34.61, "comuna": 67.3, "numerador": 1031.0, "denominador": 2979.0, "brecha": 41.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 1072.3, "desam": 96.2, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 96.2, "global": 34.61, "comuna": null, "numerador": 1031.0, "denominador": 2979.0, "brecha": 41.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 1072.3, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 96.2}, "rem": {"grupo": "MMSS", "codigo": "V", "indicador": "Cobertura efectiva HTA", "fuente_num": "REM P4", "celda_num": "P4 C29:C30", "desc_num": "HTA 15-79a con PA menor 140/90 + HTA 80+ con PA menor 150/90", "ancla_num": "seccion b: metas de compensacion › personas bajo control por hipertension > pa < 140/90 mmhg", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×0,7% + 25-44×10,6% + 45-64×45,1% + 65+×73,3%", "desc_den": "Personas 15+ con HTA estimadas según prevalencia", "ancla_den": "", "meta_umbral": "36%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}, {"id": "VI", "nombre": "LME 6º mes", "tipo": "ingreso_mensual", "meta_umbral": 60.0, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 50.7, "global": 30.43, "comuna": null, "numerador": 7.0, "denominador": 23.0, "brecha": 7.0, "estado": "critico", "nota": "", "meta_corte": 13.8, "desam": 53.0, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 55.6, "global": 33.33, "comuna": 80.3, "numerador": 9.0, "denominador": 27.0, "brecha": 7.0, "estado": "critico", "nota": "", "meta_corte": 16.2, "desam": 53.3, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 64.5, "global": 38.71, "comuna": 80.4, "numerador": 12.0, "denominador": 31.0, "brecha": 7.0, "estado": "bajo", "nota": "", "meta_corte": 18.6, "desam": 59.5, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 63.1, "global": 37.84, "comuna": 48.8, "numerador": 14.0, "denominador": 37.0, "brecha": 8.0, "estado": "bajo", "nota": "", "meta_corte": 22.2, "desam": 61.1, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 67.5, "global": 40.48, "comuna": 49.9, "numerador": 17.0, "denominador": 42.0, "brecha": 8.0, "estado": "bajo", "nota": "", "meta_corte": 25.2, "desam": 66.7, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 70.5, "global": 42.31, "comuna": null, "numerador": 22.0, "denominador": 52.0, "brecha": 9.0, "estado": "bajo", "nota": "", "meta_corte": 31.2, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "mejora", "delta": 3.0, "pendiente": 3.81, "proyeccion": 75.3}, "rem": {"grupo": "MMSS", "codigo": "VI", "indicador": "LME 6º mes", "fuente_num": "REM A03", "celda_num": "A03 H61", "desc_num": "Niños controlados ene-dic que al 6º mes recibieron LME", "ancla_num": "seccion a.5: tipo de alimentacion ninos y nin › lactancia materna exclusiva (lme)", "fuente_den": "REM A03", "celda_den": "A03 H67", "desc_den": "Niños con control de salud del 6º mes realizado ene-dic", "ancla_den": "seccion a.5: tipo de alimentacion ninos y nin › total de ninos y ninas controlados", "meta_umbral": "60%", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}}, {"id": "VII", "nombre": "Cobertura Asma+EPOC", "tipo": "semestral", "meta_umbral": 20.33, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 35.3, "global": 7.17, "comuna": 63.1, "numerador": 123.0, "denominador": 1716.0, "brecha": 226.0, "estado": "critico", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 348.8, "desam": 35.3, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 35.3, "global": 7.17, "comuna": 66.2, "numerador": 123.0, "denominador": 1716.0, "brecha": 226.0, "estado": "critico", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 348.8, "desam": 35.3, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 35.3, "global": 7.17, "comuna": null, "numerador": 123.0, "denominador": 1716.0, "brecha": 226.0, "estado": "critico", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 348.8, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 35.3}, "rem": {"grupo": "MMSS", "codigo": "VII", "indicador": "Cobertura Asma+EPOC", "fuente_num": "REM P3", "celda_num": "P3 H65:AM65 + P3 C69", "desc_num": "EPOC 40+ con control adecuado + Asma 5+ con control controlado", "ancla_num": "seccion d: nivel de control de poblacion resp › asma bronquial > controlado", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "40+×11,7% (EPOC) + 5+×10,0% (Asma)", "desc_den": "Personas con Asma/EPOC esperadas según prevalencia", "ancla_den": "", "meta_umbral": "20.33%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}], "iaaps": [{"id": "M3", "nombre": "Tasa consultas médicas morbilidad", "tipo": "anual", "meta_umbral": 0.8, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 78.2, "global": 0.16, "comuna": null, "numerador": 1763.0, "denominador": 11273.0, "brecha": 492.0, "estado": "bajo", "nota": "", "meta_corte": 2254.6, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 83.7, "global": 0.22, "comuna": null, "numerador": 2516.0, "denominador": 11273.0, "brecha": 490.0, "estado": "bajo", "nota": "", "meta_corte": 3006.1, "desam": 83.7, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 90.4, "global": 0.3, "comuna": null, "numerador": 3396.0, "denominador": 11273.0, "brecha": 362.0, "estado": "cumple", "nota": "", "meta_corte": 3757.7, "desam": 90.4, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 88.8, "global": 0.36, "comuna": null, "numerador": 4005.0, "denominador": 11273.0, "brecha": 504.0, "estado": "bajo", "nota": "", "meta_corte": 4509.2, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 87.5, "global": 0.41, "comuna": 82.0, "numerador": 4604.0, "denominador": 11273.0, "brecha": 657.0, "estado": "bajo", "nota": "", "meta_corte": 5260.7, "desam": 87.5, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 86.8, "global": 0.46, "comuna": null, "numerador": 5220.0, "denominador": 11273.0, "brecha": 792.0, "estado": "bajo", "nota": "", "meta_corte": 6012.3, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "retroceso", "delta": -0.7, "pendiente": 1.51, "proyeccion": 91.2}, "rem": {"grupo": "IAAPS", "codigo": "M3", "indicador": "Tasa consultas médicas morbilidad", "fuente_num": "REM A04 + A07 + A08 + A23 + A32", "celda_num": "A04 B12 + A07 Z126:AA126 + A08 B41 + A23 B58 + A32 B28:B29", "desc_num": "Consultas de morbilidad realizadas por profesional médico", "ancla_num": "seccion a: consultas medicas › total", "fuente_den": "FONASA per cápita", "celda_den": "Total inscritos validados", "desc_den": "Población total inscrita validada FONASA", "ancla_den": "", "meta_umbral": "0.8", "tipo": "Tasa", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M4", "nombre": "Resolutividad APS", "tipo": "ingreso_mensual", "meta_umbral": 10.0, "polaridad": "inversa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 5.53, "comuna": null, "numerador": 205.0, "denominador": 3706.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 370.6, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 4.73, "comuna": null, "numerador": 249.0, "denominador": 5267.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 526.7, "desam": 51.2, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 4.69, "comuna": null, "numerador": 332.0, "denominador": 7085.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 708.5, "desam": 51.0, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 4.93, "comuna": null, "numerador": 422.0, "denominador": 8560.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 856.0, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 5.1, "comuna": 96.0, "numerador": 513.0, "denominador": 10051.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 1005.1, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 5.2, "comuna": null, "numerador": 609.0, "denominador": 11706.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 1170.6, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M4", "indicador": "Resolutividad APS", "fuente_num": "REM A07", "celda_num": "A07 AE126:AF126", "desc_num": "SIC de controles y consultas médicas generadas en APS", "ancla_num": "seccion a.1: atributos de las atenciones de e › total", "fuente_den": "REM A01 + A04 + A06 + A07 + A08 + A23 + A32", "celda_den": "A01 C11 + A01 C13 + A01 C15 + A01 C17 + A01 C19 + A01 C21 + A01 C23 + A01 C25 + A01 C27 + A01 C29 + A01 C31 + A01 C36 + A01 C44 + A01 C48 + A01 C51 + A01 C54 + A01 C57 + A01 C63 + A04 B12 + A06 C12 + A07 Z121:AA121 + A08 B41 + A23 B58 + A23 B63 + A32 B28:B29 + A32 C130 + A32 C141", "desc_den": "Total controles y consultas médicas realizadas en APS", "ancla_den": "seccion a: controles de salud sexual y reprod › preconcepcional > medico/a", "meta_umbral": "10% (≤, inverso)", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}}, {"id": "M5", "nombre": "Visita Domiciliaria Integral", "tipo": "anual", "meta_umbral": 0.22, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 0.09, "comuna": null, "numerador": 298.0, "denominador": 3416.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 187.9, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 0.1, "comuna": null, "numerador": 329.0, "denominador": 3416.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 250.5, "desam": 100.0, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 0.11, "comuna": null, "numerador": 367.0, "denominador": 3416.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 313.1, "desam": 92.9, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 0.12, "comuna": null, "numerador": 417.0, "denominador": 3416.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 375.8, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 0.14, "comuna": 54.7, "numerador": 464.0, "denominador": 3416.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 438.4, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 0.15, "comuna": null, "numerador": 520.0, "denominador": 3416.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 501.0, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M5", "indicador": "Visita Domiciliaria Integral", "fuente_num": "REM A26 + A33", "celda_num": "A26 C10:C35 + A26 C41:F41 + A33 C39:C40", "desc_num": "Visitas domiciliarias integrales realizadas", "ancla_num": "seccion a: visitas domiciliarias integrales a › familia con nino prematuro", "fuente_den": "FONASA per cápita", "celda_den": "Total inscritos ÷ 3,3 (familias)", "desc_den": "Número de familias (población inscrita dividido 3.3)", "ancla_den": "", "meta_umbral": "0.22", "tipo": "Tasa", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M61A", "nombre": "EMP Mujeres 20-64", "tipo": "anual", "meta_umbral": 22.6, "polaridad": "directa", "puntos": [{"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 100.0, "fuente": "DESAM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 100.0, "fuente": "DESAM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 16.98, "comuna": null, "numerador": 574.0, "denominador": 3381.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 382.1, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 19.64, "comuna": 53.6, "numerador": 664.0, "denominador": 3381.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 445.7, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 21.98, "comuna": null, "numerador": 743.0, "denominador": 3381.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 509.4, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M61A", "indicador": "EMP Mujeres 20-64", "fuente_num": "REM A02", "celda_num": "A02 H21 + A02 J21 + A02 L21 + A02 N21 + A02 P21 + A02 R21 + A02 T21 + A02 V21 + A02 X21", "desc_num": "EMP realizado en mujeres 20-64 (columnas pares fila 21)", "ancla_num": "seccion b: emp segun resultado del estado nut › total", "fuente_den": "FONASA per cápita − REM P1", "celda_den": "Mujeres 20-64 − P1!B46:B52 (en control Programa Mujer)", "desc_den": "Mujeres 20-64 inscritas menos las en control del Programa de la Mujer (REM P1)", "ancla_den": "", "meta_umbral": "22.6%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M61B", "nombre": "EMP Hombres 20-64", "tipo": "anual", "meta_umbral": 19.6, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 74.3, "global": 3.64, "comuna": null, "numerador": 126.0, "denominador": 3463.0, "brecha": 44.0, "estado": "bajo", "nota": "", "meta_corte": 169.7, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 80.9, "global": 5.28, "comuna": null, "numerador": 183.0, "denominador": 3463.0, "brecha": 43.0, "estado": "bajo", "nota": "", "meta_corte": 226.2, "desam": 80.9, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 99.4, "global": 8.11, "comuna": null, "numerador": 281.0, "denominador": 3463.0, "brecha": 2.0, "estado": "cumple", "nota": "", "meta_corte": 282.8, "desam": 99.4, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 93.7, "global": 9.18, "comuna": null, "numerador": 318.0, "denominador": 3463.0, "brecha": 21.0, "estado": "cumple", "nota": "", "meta_corte": 339.4, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 90.7, "global": 10.37, "comuna": 32.5, "numerador": 359.0, "denominador": 3463.0, "brecha": 37.0, "estado": "cumple", "nota": "", "meta_corte": 395.9, "desam": 90.7, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 88.8, "global": 11.61, "comuna": null, "numerador": 402.0, "denominador": 3463.0, "brecha": 50.0, "estado": "bajo", "nota": "", "meta_corte": 452.5, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "retroceso", "delta": -1.9, "pendiente": 2.75, "proyeccion": 97.6}, "rem": {"grupo": "IAAPS", "codigo": "M61B", "indicador": "EMP Hombres 20-64", "fuente_num": "REM A02", "celda_num": "A02 G21 + A02 I21 + A02 K21 + A02 M21 + A02 O21 + A02 Q21 + A02 S21 + A02 U21 + A02 W21", "desc_num": "EMP realizado en hombres 20-64a (columnas impares)", "ancla_num": "seccion b: emp segun resultado del estado nut › total", "fuente_den": "FONASA per cápita", "celda_den": "Hombres 20-64", "desc_den": "Población hombres 20-64a inscrita validada", "ancla_den": "", "meta_umbral": "19.6%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M62", "nombre": "EMP 65 y más", "tipo": "anual", "meta_umbral": 44.6, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 13.31, "comuna": null, "numerador": 239.0, "denominador": 1796.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 200.3, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 17.37, "comuna": null, "numerador": 312.0, "denominador": 1796.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 267.0, "desam": 100.0, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 20.21, "comuna": null, "numerador": 363.0, "denominador": 1796.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 333.8, "desam": 100.0, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 25.11, "comuna": null, "numerador": 451.0, "denominador": 1796.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 400.5, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 29.4, "comuna": 50.7, "numerador": 528.0, "denominador": 1796.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 467.3, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 32.46, "comuna": null, "numerador": 583.0, "denominador": 1796.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 534.0, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M62", "indicador": "EMP 65 y más", "fuente_num": "REM A02", "celda_num": "A02 Y21:AF21", "desc_num": "EMP realizado en adultos 65+", "ancla_num": "seccion b: emp segun resultado del estado nut › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 65 y más", "desc_den": "Población inscrita validada 65 años y más", "ancla_den": "", "meta_umbral": "44.6%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M7", "nombre": "Evaluación DSM 12-23m", "tipo": "anual", "meta_umbral": 95.05, "polaridad": "directa", "puntos": [{"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 100.0, "fuente": "DESAM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 100.0, "fuente": "DESAM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 50.45, "comuna": null, "numerador": 56.0, "denominador": 111.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 52.8, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 58.56, "comuna": 62.2, "numerador": 65.0, "denominador": 111.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 61.5, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 67.57, "comuna": null, "numerador": 75.0, "denominador": 111.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 70.3, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M7", "indicador": "Evaluación DSM 12-23m", "fuente_num": "REM A03", "celda_num": "A03 J21:M24", "desc_num": "Niños 12-23m con Evaluación Desarrollo Psicomotor", "ancla_num": "seccion a.2: resultados de la aplicacion de e › primera evaluacion > normal", "fuente_den": "REM P2", "celda_den": "P2 V12:Y12", "desc_den": "Niños 12-23 meses bajo control", "ancla_den": "seccion a: poblacion en control, segun estado › total de ninos/as en control", "meta_umbral": "95.05%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M8", "nombre": "Control Adolescente 10-19", "tipo": "anual", "meta_umbral": 22.2, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 8.25, "comuna": null, "numerador": 128.0, "denominador": 1551.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 86.1, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 12.31, "comuna": null, "numerador": 191.0, "denominador": 1551.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 114.8, "desam": 100.0, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 15.47, "comuna": null, "numerador": 240.0, "denominador": 1551.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 143.5, "desam": 100.0, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 18.18, "comuna": null, "numerador": 282.0, "denominador": 1551.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 172.2, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 20.12, "comuna": 59.1, "numerador": 312.0, "denominador": 1551.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 200.9, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 22.24, "comuna": null, "numerador": 345.0, "denominador": 1551.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 229.5, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M8", "indicador": "Control Adolescente 10-19", "fuente_num": "REM A01", "celda_num": "A01 C74 + A01 F74", "desc_num": "Controles de salud realizados a adolescentes 10-19a", "ancla_num": "seccion d: control de salud integral de adole › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 10-19", "desc_den": "Población 10-19a inscrita validada", "ancla_den": "", "meta_umbral": "22.2%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M91", "nombre": "Cobertura Salud Mental", "tipo": "cobertura", "meta_umbral": 21.2, "polaridad": "directa", "puntos": [{"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 167.4, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 167.4, "fuente": "DESAM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 168.3, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 168.3, "fuente": "DESAM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 263.6, "global": 55.89, "comuna": null, "numerador": 1386.0, "denominador": 2480.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 525.8, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 267.4, "global": 56.69, "comuna": 114.9, "numerador": 1406.0, "denominador": 2480.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 525.8, "desam": 267.4, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 266.8, "global": 56.57, "comuna": null, "numerador": 1403.0, "denominador": 2480.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 525.8, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "retroceso", "delta": -0.6, "pendiente": 29.79, "proyeccion": 316.1}, "rem": {"grupo": "IAAPS", "codigo": "M91", "indicador": "Cobertura Salud Mental", "fuente_num": "REM P6 + A05", "celda_num": "P6!C13 (censo junio) + A05!C193 − A05!C245 − A05!AN245:AP245 del mes", "desc_num": "Personas bajo control en programa de salud mental (censo P6 + movimiento del mes)", "ancla_num": "numero de personas en control en el programa", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "Total inscritos × 22%", "desc_den": "Personas con problemas SM esperadas (22% de inscritos)", "ancla_den": "", "meta_umbral": "21.2%", "tipo": "Porcentaje", "periodicidad": "Cobertura al corte"}}, {"id": "M92", "nombre": "Tasa controles Salud Mental", "tipo": "anual", "meta_umbral": 6.14, "polaridad": "directa", "puntos": [{"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 96.2, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 96.2, "fuente": "DESAM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "cumple", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 100.0, "fuente": "DESAM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 69.0, "global": 2.12, "comuna": null, "numerador": 2935.0, "denominador": 1386.0, "brecha": 1320.0, "estado": "bajo", "nota": "", "meta_corte": 4255.0, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 69.2, "global": 2.48, "comuna": 98.4, "numerador": 3485.0, "denominador": 1406.0, "brecha": 1551.0, "estado": "bajo", "nota": "", "meta_corte": 5035.8, "desam": 69.2, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 72.3, "global": 2.96, "comuna": null, "numerador": 4153.0, "denominador": 1403.0, "brecha": 1590.0, "estado": "bajo", "nota": "", "meta_corte": 5742.9, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "mejora", "delta": 3.1, "pendiente": -7.86, "proyeccion": 57.8}, "rem": {"grupo": "IAAPS", "codigo": "M92", "indicador": "Tasa controles Salud Mental", "fuente_num": "REM A04 + A06 + A19a + A26 + A32", "celda_num": "A06 C22:C23 + A06 E32 + A19a C110 + A19a C112 + A26 C30:C31 + A26 C38:F38 + A32 B123:B125 + A32 C140 + A32 C151 + A04 B24", "desc_num": "Controles de salud mental realizados (10 celdas REM)", "ancla_num": "seccion a.1: controles de atencion primaria / › controles salud mental > total", "fuente_den": "REM P6 + A05", "celda_den": "P6!C13 (censo junio) + A05!C193 − A05!C245 − A05!AN245:AP245 del mes", "desc_den": "Personas bajo control programa SM al mes (P6 + movimiento del mes)", "ancla_den": "numero de personas en control en el programa", "meta_umbral": "6.14", "tipo": "Tasa", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M93", "nombre": "Egresos alta clínica SM", "tipo": "anual", "meta_umbral": 12.0, "polaridad": "directa", "puntos": [{"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 39.8, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "critico", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 39.8, "fuente": "DESAM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 40.7, "global": null, "comuna": null, "numerador": null, "denominador": null, "brecha": null, "estado": "critico", "nota": "Valor DESAM: el denominador de este mes usa el REM P de diciembre 2025, no cargado", "meta_corte": null, "desam": 40.7, "fuente": "DESAM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 34.9, "global": 2.09, "comuna": null, "numerador": 29.0, "denominador": 1386.0, "brecha": 54.0, "estado": "critico", "nota": "", "meta_corte": 83.2, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 33.5, "global": 2.35, "comuna": 59.7, "numerador": 33.0, "denominador": 1406.0, "brecha": 65.0, "estado": "critico", "nota": "", "meta_corte": 98.4, "desam": 33.5, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 36.5, "global": 2.92, "comuna": null, "numerador": 41.0, "denominador": 1403.0, "brecha": 71.0, "estado": "critico", "nota": "", "meta_corte": 112.2, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "mejora", "delta": 3.0, "pendiente": -1.38, "proyeccion": 32.9}, "rem": {"grupo": "IAAPS", "codigo": "M93", "indicador": "Egresos alta clínica SM", "fuente_num": "REM A05", "celda_num": "A05 C245", "desc_num": "Altas clínicas del programa de salud mental", "ancla_num": "seccion o: egresos del programa de salud ment › egresos del programa", "fuente_den": "REM P6 + A05", "celda_den": "P6!C13 (censo junio) + A05!C193 − A05!C245 − A05!AN245:AP245 del mes", "desc_den": "Personas bajo control programa SM al mes (P6 + movimiento del mes)", "ancla_den": "numero de personas en control en el programa", "meta_umbral": "12%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M12", "nombre": "Ingreso precoz embarazo", "tipo": "ingreso_mensual", "meta_umbral": 94.3, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 65.6, "global": 61.9, "comuna": null, "numerador": 13.0, "denominador": 21.0, "brecha": 7.0, "estado": "bajo", "nota": "", "meta_corte": 19.8, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 76.8, "global": 72.41, "comuna": null, "numerador": 21.0, "denominador": 29.0, "brecha": 6.0, "estado": "bajo", "nota": "", "meta_corte": 27.3, "desam": 79.5, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 84.3, "global": 79.49, "comuna": null, "numerador": 31.0, "denominador": 39.0, "brecha": 6.0, "estado": "bajo", "nota": "", "meta_corte": 36.8, "desam": 84.8, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 86.6, "global": 81.63, "comuna": null, "numerador": 40.0, "denominador": 49.0, "brecha": 6.0, "estado": "bajo", "nota": "", "meta_corte": 46.2, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 90.1, "global": 85.0, "comuna": 93.5, "numerador": 51.0, "denominador": 60.0, "brecha": 6.0, "estado": "cumple", "nota": "", "meta_corte": 56.6, "desam": 89.2, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 89.3, "global": 84.21, "comuna": null, "numerador": 64.0, "denominador": 76.0, "brecha": 8.0, "estado": "bajo", "nota": "", "meta_corte": 71.7, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "retroceso", "delta": -0.8, "pendiente": 4.59, "proyeccion": 98.2}, "rem": {"grupo": "IAAPS", "codigo": "M12", "indicador": "Ingreso precoz embarazo", "fuente_num": "REM A05", "celda_num": "A05 C13", "desc_num": "Embarazadas ingresadas antes de 14 semanas a control", "ancla_num": "seccion a: ingresos de gestantes a programa p › gestantes ingresadas antes de las 14 semanas", "fuente_den": "REM A05", "celda_den": "A05 C11", "desc_den": "Total embarazadas ingresadas a control", "ancla_den": "seccion a: ingresos de gestantes a programa p › gestantes ingresadas", "meta_umbral": "94.3%", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}}, {"id": "M13", "nombre": "Anticoncepción adolescente", "tipo": "semestral", "meta_umbral": 23.8, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 88.7, "global": 21.1, "comuna": null, "numerador": 157.0, "denominador": 744.0, "brecha": 20.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 177.1, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 88.7, "global": 21.1, "comuna": 73.8, "numerador": 157.0, "denominador": 744.0, "brecha": 20.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 177.1, "desam": 88.7, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 88.7, "global": 21.1, "comuna": null, "numerador": 157.0, "denominador": 744.0, "brecha": 20.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 177.1, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 88.7}, "rem": {"grupo": "IAAPS", "codigo": "M13", "indicador": "Anticoncepción adolescente", "fuente_num": "REM P1", "celda_num": "P1 E25", "desc_num": "Adolescentes 15-19a con regulación de fertilidad", "ancla_num": "seccion a: poblacion en control segun metodo  › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 15-19", "desc_den": "Total adolescentes 15-19a inscritos", "ancla_den": "", "meta_umbral": "23.8%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}, {"id": "M14", "nombre": "Cobertura DM2", "tipo": "semestral", "meta_umbral": 61.1, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 64.82, "comuna": null, "numerador": 850.0, "denominador": 1311.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 801.2, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 64.82, "comuna": 89.3, "numerador": 850.0, "denominador": 1311.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 801.2, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 64.82, "comuna": null, "numerador": 850.0, "denominador": 1311.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 801.2, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M14", "indicador": "Cobertura DM2", "fuente_num": "REM P4", "celda_num": "P4 C17", "desc_num": "Personas 15+ con DM2 bajo control", "ancla_num": "seccion a: programa salud cardiovascular (psc › personas bajo control segun patologia y factores de riesgo (existencia) > diabetes mellitus tipo 2", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×1,8% + 25-44×6,3% + 45-64×18,3% + 65+×30,6%", "desc_den": "Personas 15+ con DM2 estimadas según prevalencia", "ancla_den": "", "meta_umbral": "61.1%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}, {"id": "M15", "nombre": "Cobertura HTA", "tipo": "semestral", "meta_umbral": 53.0, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 53.82, "comuna": null, "numerador": 1603.0, "denominador": 2979.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 1578.6, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 100.0, "global": 53.82, "comuna": 78.2, "numerador": 1603.0, "denominador": 2979.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 1578.6, "desam": 100.0, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 53.82, "comuna": null, "numerador": 1603.0, "denominador": 2979.0, "brecha": 0.0, "estado": "cumple", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 1578.6, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 100.0}, "rem": {"grupo": "IAAPS", "codigo": "M15", "indicador": "Cobertura HTA", "fuente_num": "REM P4", "celda_num": "P4 C16", "desc_num": "Personas 15+ con HTA bajo control", "ancla_num": "seccion a: programa salud cardiovascular (psc › personas bajo control segun patologia y factores de riesgo (existencia) > hipertension arterial", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×0,7% + 25-44×10,6% + 45-64×45,1% + 65+×73,3%", "desc_den": "Personas 15+ con HTA estimadas según prevalencia", "ancla_den": "", "meta_umbral": "53.0%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}, {"id": "M17A", "nombre": "Menores 3a libres caries", "tipo": "anual", "meta_umbral": 71.01, "polaridad": "directa", "puntos": [{"corte": 3, "mes": "marzo", "anio": 2026, "orden": 202603, "valor": 100.0, "global": 18.22, "comuna": null, "numerador": 43.0, "denominador": 236.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 41.9, "desam": null, "fuente": "REM"}, {"corte": 4, "mes": "abril", "anio": 2026, "orden": 202604, "valor": 100.0, "global": 24.15, "comuna": null, "numerador": 57.0, "denominador": 236.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 55.9, "desam": 100.0, "fuente": "REM"}, {"corte": 5, "mes": "mayo", "anio": 2026, "orden": 202605, "valor": 100.0, "global": 30.08, "comuna": null, "numerador": 71.0, "denominador": 236.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 69.8, "desam": 100.0, "fuente": "REM"}, {"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 100.0, "global": 36.02, "comuna": null, "numerador": 85.0, "denominador": 236.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 83.8, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 94.1, "global": 38.98, "comuna": 70.3, "numerador": 92.0, "denominador": 236.0, "brecha": 6.0, "estado": "cumple", "nota": "", "meta_corte": 97.8, "desam": 94.1, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 100.0, "global": 49.58, "comuna": null, "numerador": 117.0, "denominador": 236.0, "brecha": 0.0, "estado": "cumple", "nota": "", "meta_corte": 111.7, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "mejora", "delta": 5.9, "pendiente": -0.51, "proyeccion": 97.2}, "rem": {"grupo": "IAAPS", "codigo": "M17A", "indicador": "Menores 3a libres caries", "fuente_num": "REM A09", "celda_num": "A09 G51:L51", "desc_num": "Menores 3a con registro CEOD igual 0", "ancla_num": "seccion c : ingresos y egresos de odontologia › indice ceod o copd (indice ceod se usa en menores de 7 anos, para resto se utili", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos menores de 3 años", "desc_den": "Niños menores de 3 años inscritos", "ancla_den": "", "meta_umbral": "71.01%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}}, {"id": "M17B", "nombre": "Normalidad nutricional menor 2a", "tipo": "semestral", "meta_umbral": 61.6, "polaridad": "directa", "puntos": [{"corte": 6, "mes": "junio", "anio": 2026, "orden": 202606, "valor": 75.5, "global": 46.53, "comuna": null, "numerador": 94.0, "denominador": 202.0, "brecha": 30.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 124.4, "desam": null, "fuente": "REM"}, {"corte": 7, "mes": "julio", "anio": 2026, "orden": 202607, "valor": 75.5, "global": 46.53, "comuna": 86.7, "numerador": 94.0, "denominador": 202.0, "brecha": 30.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 124.4, "desam": 94.8, "fuente": "REM"}, {"corte": 8, "mes": "agosto", "anio": 2026, "orden": 202608, "valor": 75.5, "global": 46.53, "comuna": null, "numerador": 94.0, "denominador": 202.0, "brecha": 30.0, "estado": "bajo", "nota": "Corte semestral: REM P de junio (se mantiene hasta el próximo censo)", "meta_corte": 124.4, "desam": null, "fuente": "REM"}], "tendencia": {"direccion": "estable", "delta": 0.0, "pendiente": 0.0, "proyeccion": 75.5}, "rem": {"grupo": "IAAPS", "codigo": "M17B", "indicador": "Normalidad nutricional menor 2a", "fuente_num": "REM P2", "celda_num": "P2 H36:Y36", "desc_num": "Niños con estado nutricional normal (REM P2 fila «Normal»)", "ancla_num": "seccion a: poblacion en control, segun estado › estado nutricional > normal", "fuente_den": "REM P2", "celda_den": "P2 H37:Y37", "desc_den": "Niños en control nutricional (REM P2 fila «Subtotal»)", "ancla_den": "seccion a: poblacion en control, segun estado › estado nutricional > subtotal", "meta_umbral": "61.6%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}}], "catalogo": [{"grupo": "MMSS", "codigo": "I", "indicador": "Recuperación DSM 12-23m", "fuente_num": "REM A03", "celda_num": "A03 J26:M26 + A03 J28:M28", "desc_num": "Niños 12-23m con riesgo DSM recuperados (normal o normal con rezago desde riesgo)", "ancla_num": "seccion a.2: resultados de la aplicacion de e › reevaluacion > normal (desde riesgo)", "fuente_den": "REM A03", "celda_den": "A03 J23:M23 - A03 J37:M37 - A03 J40:M40", "desc_den": "Niños 12-23m con riesgo DSM en 1ª evaluación, menos derivados y trasladados (incluye oct-dic año anterior)", "ancla_den": "seccion a.2: resultados de la aplicacion de e › primera evaluacion > riesgo", "meta_umbral": "90%", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}, {"grupo": "MMSS", "codigo": "II", "indicador": "Detección precoz cáncer cervicouterino", "fuente_num": "—", "celda_num": "Sin fórmula oficial", "desc_num": "Sin fórmula oficial publicada en el corte DESAM", "ancla_num": "", "fuente_den": "—", "celda_den": "—", "desc_den": "Sin fórmula oficial publicada en el corte DESAM", "ancla_den": "", "meta_umbral": "Por definir", "tipo": "Porcentaje", "periodicidad": "Pendiente"}, {"grupo": "MMSS", "codigo": "IIIA", "indicador": "Control odontológico 0-9", "fuente_num": "REM A03", "celda_num": "A03 F208:Y208", "desc_num": "Niños 0-9a en control con enfoque riesgo odontológico y pauta 0 aplicada", "ancla_num": "seccion d.7: aplicacion y resultados de pauta › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 0-9", "desc_den": "Niños inscritos validados de 0 a 9 años", "ancla_den": "", "meta_umbral": "48%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "MMSS", "codigo": "IIIB", "indicador": "6 años libres de caries", "fuente_num": "REM A09", "celda_num": "A09 S51:T51", "desc_num": "Niños de 6 años con ceod igual a 0 ene-dic", "ancla_num": "seccion c : ingresos y egresos de odontologia › indice ceod o copd (indice ceod se usa en menores de 7 anos, para resto se utili", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos de 6 años", "desc_den": "Niños inscritos validados de 6 años", "ancla_den": "", "meta_umbral": "22%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "MMSS", "codigo": "IVA", "indicador": "Cobertura efectiva DM2", "fuente_num": "REM P4", "celda_num": "P4 C31:C32", "desc_num": "DM2 15-79a con HbA1c menor 7% + DM2 80+ con HbA1c menor 8%", "ancla_num": "seccion b: metas de compensacion › personas bajo control por diabetes mellitus > hba1c<7%", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×1,8% + 25-44×6,3% + 45-64×18,3% + 65+×30,6%", "desc_den": "Personas 15+ con DM2 estimadas según prevalencia", "ancla_den": "", "meta_umbral": "27%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "MMSS", "codigo": "IVB", "indicador": "Evaluación pies DM2", "fuente_num": "REM P4", "celda_num": "P4 C62:C65", "desc_num": "DM2 15+ con evaluación de pie vigente últimos 12 meses", "ancla_num": "seccion c: variables de seguimiento del pscv  › con *evaluacion vigente del pie segun pauta de estimacion del riesgo de ulceraci > riesgo bajo", "fuente_den": "REM P4", "celda_den": "P4 C17", "desc_den": "DM2 15+ bajo control últimos 12 meses", "ancla_den": "seccion a: programa salud cardiovascular (psc › personas bajo control segun patologia y factores de riesgo (existencia) > diabetes mellitus tipo 2", "meta_umbral": "80%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "MMSS", "codigo": "V", "indicador": "Cobertura efectiva HTA", "fuente_num": "REM P4", "celda_num": "P4 C29:C30", "desc_num": "HTA 15-79a con PA menor 140/90 + HTA 80+ con PA menor 150/90", "ancla_num": "seccion b: metas de compensacion › personas bajo control por hipertension > pa < 140/90 mmhg", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×0,7% + 25-44×10,6% + 45-64×45,1% + 65+×73,3%", "desc_den": "Personas 15+ con HTA estimadas según prevalencia", "ancla_den": "", "meta_umbral": "36%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "MMSS", "codigo": "VI", "indicador": "LME 6º mes", "fuente_num": "REM A03", "celda_num": "A03 H61", "desc_num": "Niños controlados ene-dic que al 6º mes recibieron LME", "ancla_num": "seccion a.5: tipo de alimentacion ninos y nin › lactancia materna exclusiva (lme)", "fuente_den": "REM A03", "celda_den": "A03 H67", "desc_den": "Niños con control de salud del 6º mes realizado ene-dic", "ancla_den": "seccion a.5: tipo de alimentacion ninos y nin › total de ninos y ninas controlados", "meta_umbral": "60%", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}, {"grupo": "MMSS", "codigo": "VII", "indicador": "Cobertura Asma+EPOC", "fuente_num": "REM P3", "celda_num": "P3 H65:AM65 + P3 C69", "desc_num": "EPOC 40+ con control adecuado + Asma 5+ con control controlado", "ancla_num": "seccion d: nivel de control de poblacion resp › asma bronquial > controlado", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "40+×11,7% (EPOC) + 5+×10,0% (Asma)", "desc_den": "Personas con Asma/EPOC esperadas según prevalencia", "ancla_den": "", "meta_umbral": "20.33%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "IAAPS", "codigo": "M3", "indicador": "Tasa consultas médicas morbilidad", "fuente_num": "REM A04 + A07 + A08 + A23 + A32", "celda_num": "A04 B12 + A07 Z126:AA126 + A08 B41 + A23 B58 + A32 B28:B29", "desc_num": "Consultas de morbilidad realizadas por profesional médico", "ancla_num": "seccion a: consultas medicas › total", "fuente_den": "FONASA per cápita", "celda_den": "Total inscritos validados", "desc_den": "Población total inscrita validada FONASA", "ancla_den": "", "meta_umbral": "0.8", "tipo": "Tasa", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M4", "indicador": "Resolutividad APS", "fuente_num": "REM A07", "celda_num": "A07 AE126:AF126", "desc_num": "SIC de controles y consultas médicas generadas en APS", "ancla_num": "seccion a.1: atributos de las atenciones de e › total", "fuente_den": "REM A01 + A04 + A06 + A07 + A08 + A23 + A32", "celda_den": "A01 C11 + A01 C13 + A01 C15 + A01 C17 + A01 C19 + A01 C21 + A01 C23 + A01 C25 + A01 C27 + A01 C29 + A01 C31 + A01 C36 + A01 C44 + A01 C48 + A01 C51 + A01 C54 + A01 C57 + A01 C63 + A04 B12 + A06 C12 + A07 Z121:AA121 + A08 B41 + A23 B58 + A23 B63 + A32 B28:B29 + A32 C130 + A32 C141", "desc_den": "Total controles y consultas médicas realizadas en APS", "ancla_den": "seccion a: controles de salud sexual y reprod › preconcepcional > medico/a", "meta_umbral": "10% (≤, inverso)", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}, {"grupo": "IAAPS", "codigo": "M5", "indicador": "Visita Domiciliaria Integral", "fuente_num": "REM A26 + A33", "celda_num": "A26 C10:C35 + A26 C41:F41 + A33 C39:C40", "desc_num": "Visitas domiciliarias integrales realizadas", "ancla_num": "seccion a: visitas domiciliarias integrales a › familia con nino prematuro", "fuente_den": "FONASA per cápita", "celda_den": "Total inscritos ÷ 3,3 (familias)", "desc_den": "Número de familias (población inscrita dividido 3.3)", "ancla_den": "", "meta_umbral": "0.22", "tipo": "Tasa", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M61A", "indicador": "EMP Mujeres 20-64", "fuente_num": "REM A02", "celda_num": "A02 H21 + A02 J21 + A02 L21 + A02 N21 + A02 P21 + A02 R21 + A02 T21 + A02 V21 + A02 X21", "desc_num": "EMP realizado en mujeres 20-64 (columnas pares fila 21)", "ancla_num": "seccion b: emp segun resultado del estado nut › total", "fuente_den": "FONASA per cápita − REM P1", "celda_den": "Mujeres 20-64 − P1!B46:B52 (en control Programa Mujer)", "desc_den": "Mujeres 20-64 inscritas menos las en control del Programa de la Mujer (REM P1)", "ancla_den": "", "meta_umbral": "22.6%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M61B", "indicador": "EMP Hombres 20-64", "fuente_num": "REM A02", "celda_num": "A02 G21 + A02 I21 + A02 K21 + A02 M21 + A02 O21 + A02 Q21 + A02 S21 + A02 U21 + A02 W21", "desc_num": "EMP realizado en hombres 20-64a (columnas impares)", "ancla_num": "seccion b: emp segun resultado del estado nut › total", "fuente_den": "FONASA per cápita", "celda_den": "Hombres 20-64", "desc_den": "Población hombres 20-64a inscrita validada", "ancla_den": "", "meta_umbral": "19.6%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M62", "indicador": "EMP 65 y más", "fuente_num": "REM A02", "celda_num": "A02 Y21:AF21", "desc_num": "EMP realizado en adultos 65+", "ancla_num": "seccion b: emp segun resultado del estado nut › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 65 y más", "desc_den": "Población inscrita validada 65 años y más", "ancla_den": "", "meta_umbral": "44.6%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M7", "indicador": "Evaluación DSM 12-23m", "fuente_num": "REM A03", "celda_num": "A03 J21:M24", "desc_num": "Niños 12-23m con Evaluación Desarrollo Psicomotor", "ancla_num": "seccion a.2: resultados de la aplicacion de e › primera evaluacion > normal", "fuente_den": "REM P2", "celda_den": "P2 V12:Y12", "desc_den": "Niños 12-23 meses bajo control", "ancla_den": "seccion a: poblacion en control, segun estado › total de ninos/as en control", "meta_umbral": "95.05%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M8", "indicador": "Control Adolescente 10-19", "fuente_num": "REM A01", "celda_num": "A01 C74 + A01 F74", "desc_num": "Controles de salud realizados a adolescentes 10-19a", "ancla_num": "seccion d: control de salud integral de adole › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 10-19", "desc_den": "Población 10-19a inscrita validada", "ancla_den": "", "meta_umbral": "22.2%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M91", "indicador": "Cobertura Salud Mental", "fuente_num": "REM P6 + A05", "celda_num": "P6!C13 (censo junio) + A05!C193 − A05!C245 − A05!AN245:AP245 del mes", "desc_num": "Personas bajo control en programa de salud mental (censo P6 + movimiento del mes)", "ancla_num": "numero de personas en control en el programa", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "Total inscritos × 22%", "desc_den": "Personas con problemas SM esperadas (22% de inscritos)", "ancla_den": "", "meta_umbral": "21.2%", "tipo": "Porcentaje", "periodicidad": "Cobertura al corte"}, {"grupo": "IAAPS", "codigo": "M92", "indicador": "Tasa controles Salud Mental", "fuente_num": "REM A04 + A06 + A19a + A26 + A32", "celda_num": "A06 C22:C23 + A06 E32 + A19a C110 + A19a C112 + A26 C30:C31 + A26 C38:F38 + A32 B123:B125 + A32 C140 + A32 C151 + A04 B24", "desc_num": "Controles de salud mental realizados (10 celdas REM)", "ancla_num": "seccion a.1: controles de atencion primaria / › controles salud mental > total", "fuente_den": "REM P6 + A05", "celda_den": "P6!C13 (censo junio) + A05!C193 − A05!C245 − A05!AN245:AP245 del mes", "desc_den": "Personas bajo control programa SM al mes (P6 + movimiento del mes)", "ancla_den": "numero de personas en control en el programa", "meta_umbral": "6.14", "tipo": "Tasa", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M93", "indicador": "Egresos alta clínica SM", "fuente_num": "REM A05", "celda_num": "A05 C245", "desc_num": "Altas clínicas del programa de salud mental", "ancla_num": "seccion o: egresos del programa de salud ment › egresos del programa", "fuente_den": "REM P6 + A05", "celda_den": "P6!C13 (censo junio) + A05!C193 − A05!C245 − A05!AN245:AP245 del mes", "desc_den": "Personas bajo control programa SM al mes (P6 + movimiento del mes)", "ancla_den": "numero de personas en control en el programa", "meta_umbral": "12%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M12", "indicador": "Ingreso precoz embarazo", "fuente_num": "REM A05", "celda_num": "A05 C13", "desc_num": "Embarazadas ingresadas antes de 14 semanas a control", "ancla_num": "seccion a: ingresos de gestantes a programa p › gestantes ingresadas antes de las 14 semanas", "fuente_den": "REM A05", "celda_den": "A05 C11", "desc_den": "Total embarazadas ingresadas a control", "ancla_den": "seccion a: ingresos de gestantes a programa p › gestantes ingresadas", "meta_umbral": "94.3%", "tipo": "Porcentaje", "periodicidad": "Ingreso mensual"}, {"grupo": "IAAPS", "codigo": "M13", "indicador": "Anticoncepción adolescente", "fuente_num": "REM P1", "celda_num": "P1 E25", "desc_num": "Adolescentes 15-19a con regulación de fertilidad", "ancla_num": "seccion a: poblacion en control segun metodo  › total", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos 15-19", "desc_den": "Total adolescentes 15-19a inscritos", "ancla_den": "", "meta_umbral": "23.8%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "IAAPS", "codigo": "M14", "indicador": "Cobertura DM2", "fuente_num": "REM P4", "celda_num": "P4 C17", "desc_num": "Personas 15+ con DM2 bajo control", "ancla_num": "seccion a: programa salud cardiovascular (psc › personas bajo control segun patologia y factores de riesgo (existencia) > diabetes mellitus tipo 2", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×1,8% + 25-44×6,3% + 45-64×18,3% + 65+×30,6%", "desc_den": "Personas 15+ con DM2 estimadas según prevalencia", "ancla_den": "", "meta_umbral": "61.1%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "IAAPS", "codigo": "M15", "indicador": "Cobertura HTA", "fuente_num": "REM P4", "celda_num": "P4 C16", "desc_num": "Personas 15+ con HTA bajo control", "ancla_num": "seccion a: programa salud cardiovascular (psc › personas bajo control segun patologia y factores de riesgo (existencia) > hipertension arterial", "fuente_den": "FONASA per cápita × prevalencia", "celda_den": "15-24×0,7% + 25-44×10,6% + 45-64×45,1% + 65+×73,3%", "desc_den": "Personas 15+ con HTA estimadas según prevalencia", "ancla_den": "", "meta_umbral": "53.0%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}, {"grupo": "IAAPS", "codigo": "M17A", "indicador": "Menores 3a libres caries", "fuente_num": "REM A09", "celda_num": "A09 G51:L51", "desc_num": "Menores 3a con registro CEOD igual 0", "ancla_num": "seccion c : ingresos y egresos de odontologia › indice ceod o copd (indice ceod se usa en menores de 7 anos, para resto se utili", "fuente_den": "FONASA per cápita", "celda_den": "Inscritos menores de 3 años", "desc_den": "Niños menores de 3 años inscritos", "ancla_den": "", "meta_umbral": "71.01%", "tipo": "Porcentaje", "periodicidad": "Anual (prorrateo mensual)"}, {"grupo": "IAAPS", "codigo": "M17B", "indicador": "Normalidad nutricional menor 2a", "fuente_num": "REM P2", "celda_num": "P2 H36:Y36", "desc_num": "Niños con estado nutricional normal (REM P2 fila «Normal»)", "ancla_num": "seccion a: poblacion en control, segun estado › estado nutricional > normal", "fuente_den": "REM P2", "celda_den": "P2 H37:Y37", "desc_den": "Niños en control nutricional (REM P2 fila «Subtotal»)", "ancla_den": "seccion a: poblacion en control, segun estado › estado nutricional > subtotal", "meta_umbral": "61.6%", "tipo": "Porcentaje", "periodicidad": "Semestral (REM P)"}], "eje_tiempo": [{"orden": 202603, "label": "Mar 26"}, {"orden": 202604, "label": "Abr 26"}, {"orden": 202605, "label": "May 26"}, {"orden": 202606, "label": "Jun 26"}, {"orden": 202607, "label": "Jul 26"}, {"orden": 202608, "label": "Ago 26"}]};
+</script>
+<script>
+
+// ====================================================================
+// Dashboard CESFAM Tongoy · lógica de render (vanilla JS, sin librerías)
+// ====================================================================
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>Array.from(el.querySelectorAll(s));
+
+// Metadatos header
+$('#meta-generado').textContent = 'Generado ' + DATA.generado;
+$('#meta-cortes').textContent = DATA.eje_tiempo.length + ' cortes cargados';
+
+// ---- utilidades ----
+function fmt(v,dec=1){ if(v===null||v===undefined) return '—'; return Number(v).toFixed(dec).replace('.',','); }
+function estadoBadge(e){
+  const map={cumple:'Cumple',bajo:'Bajo meta',critico:'Crítico',sindato:'Pendiente'};
+  return `<span class="sm-card__badge badge-${e||'sindato'}">${map[e]||'—'}</span>`;
+}
+function trendGlyph(dir){
+  if(dir==='mejora') return '▲';
+  if(dir==='retroceso') return '▼';
+  if(dir==='estable') return '▬';
+  return '·';
+}
+
+// ---- sparkline SVG ----
+const ESTADO_COLOR = {cumple:'#1B6B45', bajo:'#9A6400', critico:'#9E2B25', sindato:'#8A949C'};
+function sparkline(puntos, meta, polaridad, estado){
+  const vals = puntos.filter(p=>p.valor!==null);
+  if(vals.length<1) return '<svg class="sm-card__spark" viewBox="0 0 200 46"></svg>';
+  const col = ESTADO_COLOR[estado] || '#22303A';
+  const W=200,H=46,pad=5;
+  let maxV = Math.max(120, meta||0, ...vals.map(p=>p.valor));
+  const x = i => pad + (W-2*pad) * (vals.length===1?0.5:i/(vals.length-1));
+  const y = v => H-pad - (H-2*pad)*(v/maxV);
+  // línea de meta
+  let metaLine = '';
+  if(meta!==null && meta!==undefined){
+    const ym=y(meta);
+    metaLine = `<line x1="${pad}" y1="${ym}" x2="${W-pad}" y2="${ym}" stroke="#B0B8BC" stroke-width="1" stroke-dasharray="3 2"/>`;
+  }
+  // área bajo la curva (muy tenue, del color de estado)
+  let area='';
+  if(vals.length>1){
+    let ad = vals.map((p,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(p.valor).toFixed(1)}`).join(' ');
+    ad += `L${x(vals.length-1).toFixed(1)},${(H-pad).toFixed(1)} L${x(0).toFixed(1)},${(H-pad).toFixed(1)} Z`;
+    area = `<path d="${ad}" fill="${col}" opacity="0.08"/>`;
+  }
+  let d = vals.map((p,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(p.valor).toFixed(1)}`).join(' ');
+  let dots = vals.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.valor).toFixed(1)}" r="2.3" fill="${col}"/>`).join('');
+  const last = vals[vals.length-1];
+  const lastDot = `<circle cx="${x(vals.length-1).toFixed(1)}" cy="${y(last.valor).toFixed(1)}" r="4" fill="${col}" stroke="#fff" stroke-width="1.5"/>`;
+  return `<svg class="sm-card__spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Tendencia del indicador">
+    ${area}${metaLine}<path d="${d}" fill="none" stroke="${col}" stroke-width="2.2"/>${dots}${lastDot}</svg>`;
+}
+
+// ---- tarjeta small-multiple ----
+function card(s, grupo){
+  const vals = s.puntos.filter(p=>p.valor!==null);
+  const last = vals.length? vals[vals.length-1] : null;
+  const t = s.tendencia;
+  const deltaTxt = t.delta!==null ? (t.delta>0?'+':'')+fmt(t.delta)+' pts' : '';
+  const estado = last? last.estado : 'sindato';
+  return `<article class="sm-card sm-card--${estado}" tabindex="0" role="button" data-grupo="${grupo}" data-id="${s.id}" aria-label="Ver detalle de ${s.nombre}">
+    <div class="sm-card__head">
+      <span class="sm-card__code">${grupo==='mmss'?'Meta ':''}${s.id}</span>
+      ${estadoBadge(estado)}
+    </div>
+    <p class="sm-card__name">${s.nombre}</p>
+    <div class="sm-card__val">
+      <span class="sm-card__pct">${last?fmt(last.valor):'—'}${last&&last.valor!==null?'%':''}</span>
+      <span class="sm-card__trend">${trendGlyph(t.direccion)} ${deltaTxt}</span>
+    </div>
+    ${sparkline(s.puntos, s.meta_umbral, s.polaridad, estado)}
+    <div class="sm-card__foot">
+      <span>Meta ${s.meta_umbral!==null?fmt(s.meta_umbral)+(s.polaridad==='inversa'?'% ≤':'%'):'—'}</span>
+      <span>${vals.length} cortes</span>
+    </div>
+  </article>`;
+}
+
+// ---- render grids ----
+function renderGrid(grupo, contId){
+  const cont = $(contId);
+  cont.innerHTML = DATA[grupo].map(s=>card(s,grupo)).join('');
+  $$('.sm-card',cont).forEach(el=>{
+    const open=()=>abrirDetalle(el.dataset.grupo, el.dataset.id);
+    el.addEventListener('click',open);
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+  });
+}
+
+// ---- KPIs resumen ----
+function renderResumen(){
+  // contar estados al último corte de cada indicador
+  const todos = [...DATA.mmss, ...DATA.iaaps];
+  let cumple=0,bajo=0,critico=0,sindato=0;
+  todos.forEach(s=>{
+    const vals=s.puntos.filter(p=>p.valor!==null);
+    const last=vals.length?vals[vals.length-1]:null;
+    const e=last?last.estado:'sindato';
+    if(e==='cumple')cumple++;else if(e==='bajo')bajo++;else if(e==='critico')critico++;else sindato++;
+  });
+  const total=todos.length;
+  $('#kpi-resumen').innerHTML = `
+    <div class="kpi kpi--dark"><p class="kpi__tag">Indicadores en seguimiento</p><p class="kpi__num">${total}</p><p class="kpi__cap">9 MMSS + 17 IAAPS</p></div>
+    <div class="kpi kpi--ok"><p class="kpi__tag">Cumplen</p><p class="kpi__num">${cumple}</p><p class="kpi__cap">al último corte</p></div>
+    <div class="kpi kpi--warn"><p class="kpi__tag">Bajo meta</p><p class="kpi__num">${bajo}</p><p class="kpi__cap">requieren refuerzo</p></div>
+    <div class="kpi kpi--crit"><p class="kpi__tag">Críticos</p><p class="kpi__num">${critico}</p><p class="kpi__cap">foco prioritario</p></div>`;
+
+  // barra de distribución apilada con color semántico
+  const seg=(n,bg,fg,lbl)=> n>0?`<div style="flex:${n};background:${bg};color:${fg};padding:.55rem;text-align:center;font-family:var(--font-label);letter-spacing:.08em;font-weight:600;font-size:var(--text-sm)">${lbl} · ${n}</div>`:'';
+  $('#dist-estado').innerHTML = `<div style="display:flex;gap:3px;border-radius:3px;overflow:hidden">
+    ${seg(cumple,'#1B6B45','#fff','CUMPLE')}${seg(bajo,'#9A6400','#fff','BAJO META')}${seg(critico,'#9E2B25','#fff','CRÍTICO')}${seg(sindato,'#E0E3E0','#3D4852','PENDIENTE')}</div>`;
+}
+
+// ---- matriz corte a corte ----
+function renderMatriz(grupo, contId){
+  const ejes = DATA.eje_tiempo;
+  const filas = DATA[grupo];
+  let html = '<table class="matrix"><thead><tr><th>'+(grupo==='mmss'?'Meta':'Indicador')+'</th>';
+  ejes.forEach(e=> html+=`<th>${e.label}</th>`);
+  html+='</tr></thead><tbody>';
+  filas.forEach(s=>{
+    html+=`<tr><th>${grupo==='mmss'?'':''}${s.id} · ${s.nombre}</th>`;
+    let prev=null;
+    ejes.forEach(e=>{
+      const p=s.puntos.find(pt=>pt.orden===e.orden && pt.valor!==null);
+      if(p){
+        let arrow='';
+        if(prev!==null){const d=p.valor-prev; if(Math.abs(d)>=0.5) arrow=d>0?' <span class="delta-up">▲</span>':' <span class="delta-down">▼</span>';}
+        html+=`<td>${fmt(p.valor)}%${arrow}</td>`;
+        prev=p.valor;
+      } else { html+='<td style="color:#bbb">·</td>'; }
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  $(contId).innerHTML=html;
+}
+
+// ---- catálogo REM ----
+function renderVal(){
+  const v=DATA.validacion; const box=$('#val-body');
+  if(!v){box.innerHTML='<p class="section-desc">Sin informe de validación.</p>';return;}
+  const comp=v.comparacion||[]; const dif=comp.filter(c=>Math.abs(c[2]-c[3])>0.1);
+  const sinExp=dif.filter(c=>!(DATA.explicaciones||{})[c[0]+'|'+c[1]]);
+  const ancMal=(v.anclas||[]).filter(a=>a[0]==='✗').length, ancMov=(v.anclas||[]).filter(a=>a[0]==='△').length;
+  const kpi=(t,n,c,cls)=>`<div class="kpi ${cls}"><p class="kpi__tag">${t}</p><p class="kpi__num">${n}</p><p class="kpi__cap">${c}</p></div>`;
+  let html=`<div class="kpi-row">
+    ${kpi('Archivos REM leídos',v.identidad.length,'Serie A hasta '+v.ultimo_mes+' · P '+(v.mes_P||'—'),'kpi--dark')}
+    ${kpi('Coinciden con DESAM',(comp.length-dif.length)+' / '+comp.length,'mismo valor al corte','kpi--ok')}
+    ${kpi('Diferencias explicadas',(dif.length-sinExp.length)+' / '+dif.length,sinExp.length?sinExp.length+' sin explicar':'todas con causa documentada',sinExp.length?'kpi--crit':'kpi--ok')}
+    ${kpi('Anclas REM',ancMal?ancMal+' perdidas':'OK',ancMov?ancMov+' re-ubicadas por etiqueta':'ninguna fila desplazada',ancMal?'kpi--crit':(ancMov?'kpi--warn':'kpi--ok'))}
+  </div>`;
+  html+=`<h3 class="section-title" style="font-size:var(--text-md);margin-top:1rem">Contraste REM vs DESAM</h3><div class="tbl-scroll"><table class="matrix"><thead><tr><th>Indicador</th><th>Corte</th><th>REM</th><th>DESAM</th><th>Δ</th><th style="text-align:left">Explicación</th></tr></thead><tbody>`;
+  comp.forEach(c=>{const d=c[2]-c[3];const ex=(DATA.explicaciones||{})[c[0]+'|'+c[1]];const ok=Math.abs(d)<=0.1;
+    html+=`<tr><th>${c[0]}</th><td>${c[1]}</td><td>${fmt(c[2])}%</td><td>${fmt(c[3])}%</td><td class="${ok?'':(ex?'':'delta-down')}">${ok?'✓':(d>0?'+':'')+fmt(d)}</td><td style="text-align:left;white-space:normal;font-size:.75rem;max-width:520px">${ok?'':(ex||'⚠ sin explicación registrada')}</td></tr>`;});
+  html+='</tbody></table></div>';
+  html+=`<h3 class="section-title" style="font-size:var(--text-md);margin-top:1.4rem">Archivos leídos</h3><div class="tbl-scroll"><table class="matrix"><thead><tr><th></th><th>Archivo</th><th>DEIS</th><th>Mes</th><th>Año</th><th style="text-align:left">Versión formulario</th></tr></thead><tbody>`+
+    v.identidad.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td style="text-align:left">${r[5]} ${r[6]?'⚠ '+r[6]:''}</td></tr>`).join('')+'</tbody></table></div>';
+  html+=`<h3 class="section-title" style="font-size:var(--text-md);margin-top:1.4rem">Anclas y alertas</h3>`+
+    ((v.anclas||[]).length?'<ul style="margin-left:1.2rem;font-size:.85rem">'+v.anclas.map(a=>`<li>${a[0]} ${a[1]}</li>`).join('')+'</ul>':'<p class="section-desc">Todas las celdas conservan su etiqueta REM original. Ninguna fila desplazada.</p>')+
+    ((v.alertas||[]).length?'<ul style="margin-left:1.2rem;font-size:.85rem">'+v.alertas.map(a=>`<li>${a}</li>`).join('')+'</ul>':'<p class="section-desc">Sin alertas de calidad (denominadores en cero, numerador mayor que denominador, archivos faltantes).</p>');
+  html+=`<p class="section-desc" style="margin-top:1rem">Generado ${v.generado} · per cápita ${Math.round(v.percapita.total)} inscritos · umbrales de estado (editables): cumple ≥ ${DATA.umbrales?DATA.umbrales.cumple:90}% al corte, bajo meta ≥ ${DATA.umbrales?DATA.umbrales.bajo:60}%.</p>`;
+  box.innerHTML=html;
+}
+
+function renderREM(){
+  const cat=DATA.catalogo;
+  let html='<table class="rem-table"><thead><tr><th>Cód</th><th>Indicador</th><th>Numerador · fuente y celda</th><th>Denominador · fuente y celda</th><th>Meta</th></tr></thead><tbody>';
+  let grupoActual='';
+  cat.forEach(c=>{
+    if(c.grupo!==grupoActual){
+      grupoActual=c.grupo;
+      html+=`<tr class="rem-group-head"><td colspan="5">${grupoActual}</td></tr>`;
+    }
+    html+=`<tr>
+      <td class="cod">${c.codigo}</td>
+      <td><strong>${c.indicador}</strong><br><span style="color:#666">${c.periodicidad}</span></td>
+      <td>${c.desc_num}<div style="margin-top:.3rem"><span class="cell">${c.fuente_num}</span> <span class="cell">${c.celda_num}</span></div>${c.ancla_num?`<div style="margin-top:.25rem;color:#6B7680;font-style:italic">Ancla: «${c.ancla_num}»</div>`:''}</td>
+      <td>${c.desc_den}<div style="margin-top:.3rem"><span class="cell">${c.fuente_den}</span> <span class="cell">${c.celda_den}</span></div>${c.ancla_den?`<div style="margin-top:.25rem;color:#6B7680;font-style:italic">Ancla: «${c.ancla_den}»</div>`:''}</td>
+      <td class="cod">${c.meta_umbral}</td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  $('#rem-catalogo').innerHTML=html;
+}
+
+// ---- gráfico de línea grande (detalle) ----
+function lineChart(s){
+  const vals=s.puntos.filter(p=>p.valor!==null);
+  const last=vals.length?vals[vals.length-1]:null;
+  const col=ESTADO_COLOR[last?last.estado:'sindato']||'#22303A';
+  const W=860,H=240,padL=44,padR=96,padT=20,padB=40;
+  let maxV=Math.max(120,s.meta_umbral||0,...vals.map(p=>p.valor));
+  maxV=Math.ceil(maxV/20)*20;
+  const x=i=>padL+(W-padL-padR)*(vals.length<=1?0.5:i/(vals.length-1));
+  const y=v=>H-padB-(H-padT-padB)*(v/maxV);
+  // grid horizontal
+  let grid='';
+  for(let g=0;g<=maxV;g+=20){ const yy=y(g); grid+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#EDEFED" stroke-width="1"/><text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="10" fill="#8A949C" font-family="IBM Plex Mono">${g}</text>`; }
+  // banda de área tenue bajo la curva
+  let area='';
+  if(vals.length>1){
+    let ad=vals.map((p,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(p.valor).toFixed(1)}`).join(' ');
+    ad+=`L${x(vals.length-1).toFixed(1)},${(H-padB).toFixed(1)} L${x(0).toFixed(1)},${(H-padB).toFixed(1)} Z`;
+    area=`<path d="${ad}" fill="${col}" opacity="0.07"/>`;
+  }
+  // meta
+  let metaLine='';
+  if(s.meta_umbral!==null){const ym=y(s.meta_umbral);metaLine=`<line x1="${padL}" y1="${ym}" x2="${W-padR}" y2="${ym}" stroke="#22303A" stroke-width="1.5" stroke-dasharray="5 3"/><text x="${W-padR+4}" y="${ym+3}" font-size="10" fill="#22303A" font-family="Barlow Condensed" font-weight="600" letter-spacing="0.5">META ${fmt(s.meta_umbral)}${s.polaridad==='inversa'?' ≤':''}</text>`;}
+  // serie valor al corte
+  let path=vals.map((p,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(p.valor).toFixed(1)}`).join(' ');
+  let dots=vals.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.valor).toFixed(1)}" r="4" fill="${col}"/><text x="${x(i).toFixed(1)}" y="${y(p.valor).toFixed(1)-9}" text-anchor="middle" font-size="11" font-weight="700" fill="${col}" font-family="Inter">${fmt(p.valor)}</text>`).join('');
+  // etiquetas eje X
+  let xlabels=vals.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H-padB+16}" text-anchor="middle" font-size="10" fill="#6B7680" font-family="Barlow Condensed" font-weight="500" letter-spacing="0.5">${p.mes.substr(0,3).toUpperCase()} ${String(p.anio).substr(2)}</text>`).join('');
+  // proyección (línea punteada al siguiente punto)
+  let proj='';
+  if(s.tendencia.proyeccion!==null && vals.length>=2){
+    const xi=vals.length, xp=padL+(W-padL-padR)*(xi/(vals.length-1));
+    if(xp<=W-padR){
+      const yp=y(Math.max(0,Math.min(maxV,s.tendencia.proyeccion)));
+      const lx=x(vals.length-1),ly=y(vals[vals.length-1].valor);
+      proj=`<line x1="${lx.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${xp.toFixed(1)}" y2="${yp.toFixed(1)}" stroke="#8A949C" stroke-width="1.5" stroke-dasharray="4 3"/><circle cx="${xp.toFixed(1)}" cy="${yp.toFixed(1)}" r="3.5" fill="none" stroke="#8A949C" stroke-width="1.5"/><text x="${xp.toFixed(1)}" y="${yp.toFixed(1)-8}" text-anchor="middle" font-size="10" fill="#8A949C" font-style="italic" font-family="Inter">~${fmt(s.tendencia.proyeccion)}</text>`;
+    }
+  }
+  let desamR=vals.map((p,i)=> (p.desam!==null&&Math.abs(p.desam-p.valor)>0.1)?`<circle cx="${x(i).toFixed(1)}" cy="${y(Math.min(p.desam,maxV)).toFixed(1)}" r="6" fill="none" stroke="#8A949C" stroke-width="2"/><text x="${x(i).toFixed(1)}" y="${(y(Math.min(p.desam,maxV))+19).toFixed(1)}" text-anchor="middle" font-size="9.5" fill="#6B7680" font-family="Inter" paint-order="stroke" stroke="#fff" stroke-width="3">DESAM ${fmt(p.desam)}</text>`:'').join('');
+  return `<svg class="detail__chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución del indicador por corte">
+    ${grid}${area}${metaLine}${proj}${desamR}<path d="${path}" fill="none" stroke="${col}" stroke-width="2.5"/>${dots}${xlabels}</svg>`;
+}
+
+// ---- pasos del cálculo "al corte" según el tipo de indicador ----
+const MESN={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+function pasosCorte(s,p,cfg){
+  if(!p||p.meta_corte===null||p.fuente!=='REM') return `<p class="build__result-formula">Valor publicado por DESAM (el denominador de este mes depende del REM P del año anterior).</p>`;
+  const m=MESN[p.mes]||p.corte, A=s.meta_umbral, u=cfg.tasa?'':'%';
+  const L=(t)=>`<p class="build__result-formula">${t}</p>`;
+  if(s.polaridad==='inversa') return L(`Resolutividad = ${fmt(p.numerador,0)} ÷ ${fmt(p.denominador,0)} = ${fmt(p.global,2)}% · Meta ≤ ${fmt(A)}%`)+L(`Cumple si el valor es ≤ ${fmt(A)}% → ${p.global<=A?'cumple':'no cumple'}`);
+  if(cfg.tipo==='anual') return L(`Meta anual = ${fmt(p.denominador,0)} × ${fmt(A,2)}${u} = ${fmt(p.meta_corte*12/m,1)}`)+L(`Meta al corte = meta anual ÷ 12 × ${m} meses = ${fmt(p.meta_corte,1)}`)+L(`Realizado acumulado ene–${p.mes.substr(0,3)} ÷ meta al corte = ${fmt(p.numerador,0)} ÷ ${fmt(p.meta_corte,1)} (tope 100%)`);
+  if(cfg.tipo==='ingreso_mensual') return L(`Meta al corte = Σ denominador ene–${p.mes.substr(0,3)} × ${fmt(A)}% = ${fmt(p.denominador,0)} × ${fmt(A)}% = ${fmt(p.meta_corte,1)}`)+L(`Realizado ÷ meta al corte = ${fmt(p.numerador,0)} ÷ ${fmt(p.meta_corte,1)} (tope 100%)`);
+  if(cfg.tipo==='semestral') return L(`Meta = ${fmt(p.denominador,0)} × ${fmt(A,2)}% = ${fmt(p.meta_corte,1)} (corte semestral REM P)`)+L(`Realizado ÷ meta = ${fmt(p.numerador,0)} ÷ ${fmt(p.meta_corte,1)} (tope 100%)`);
+  if(cfg.tipo==='cobertura') return L(`Cobertura = ${fmt(p.numerador,0)} ÷ ${fmt(p.denominador,0)} = ${fmt(p.global,2)}% · Meta ${fmt(A)}%`)+L(`Cumplimiento = ${fmt(p.global,2)} ÷ ${fmt(A)} (sin tope)`);
+  return '';
+}
+// ---- detalle (modal) con construcción REM ----
+function abrirDetalle(grupo,id){
+  const s=DATA[grupo].find(x=>x.id===id);
+  if(!s) return;
+  const rem=s.rem||{};
+  const cfg=(DATA.indcfg||{})[s.id]||{};
+  const vals=s.puntos.filter(p=>p.valor!==null);
+  const last=vals.length?vals[vals.length-1]:null;
+  // construcción numerador/denominador con datos del último corte
+  const numV = last&&last.numerador!==null?fmt(last.numerador,0):'—';
+  const denV = last&&last.denominador!==null?fmt(last.denominador,0):'—';
+
+  let notaHtml='';
+  const notas=s.puntos.filter(p=>p.nota).map(p=>`<strong>${p.mes.substr(0,3)}:</strong> ${p.nota}`);
+  if(notas.length) notaHtml=`<div class="note-inline">${notas.join(' · ')}</div>`;
+
+  // mini tabla corte a corte del indicador
+  let serieRows=s.puntos.map(p=>{
+    const dif=(p.desam!==null&&p.valor!==null&&Math.abs(p.desam-p.valor)>0.1);
+    const ex=(DATA.explicaciones||{})[s.id+'|'+p.mes];
+    return `<tr><th>${p.mes.substr(0,3).toUpperCase()} ${String(p.anio).substr(2)}</th><td>${p.valor!==null?fmt(p.valor)+'%':'—'}</td><td>${p.global!==null?fmt(p.global,cfg.tasa?2:1)+(cfg.tasa?'':'%'):'—'}</td><td>${p.numerador!==null?fmt(p.numerador,0):'—'}</td><td>${p.denominador!==null?fmt(p.denominador,0):'—'}</td><td>${p.meta_corte!==null?fmt(p.meta_corte,1):'—'}</td><td ${dif?'class="delta-down" title="'+(ex||'Diferencia sin explicar')+'"':''}>${p.desam!==null?fmt(p.desam)+'%'+(dif?' ⚑':''):'—'}</td><td style="font-size:.7rem">${p.fuente||''}</td></tr>`;}).join('');
+  const difs=s.puntos.filter(p=>p.desam!==null&&p.valor!==null&&Math.abs(p.desam-p.valor)>0.1&&p.fuente==='REM');
+  const difHtml=difs.length?`<div class="note-inline"><strong>Diferencias con DESAM:</strong> ${difs.map(p=>`<br>· <strong>${p.mes}</strong>: REM ${fmt(p.valor)}% vs DESAM ${fmt(p.desam)}% — ${(DATA.explicaciones||{})[s.id+'|'+p.mes]||'⚠ sin explicación registrada'}`).join('')}</div>`:'';
+
+  $('#detail').innerHTML=`
+    <div class="detail__head">
+      <div>
+        <p class="detail__code">${grupo==='mmss'?'Meta ':''}${s.id} · ${rem.periodicidad||s.tipo} · ${rem.grupo||''}</p>
+        <h2 class="detail__title" id="detail-title">${s.nombre}</h2>
+      </div>
+      <div style="display:flex;gap:.5rem;flex:none">
+        <button class="detail__print" id="btn-print-detail" aria-label="Imprimir este indicador"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-3a2 2 0 012-2h16a2 2 0 012 2v3a2 2 0 01-2 2h-2M6 14h12v7H6z"/></svg>Imprimir</button>
+        <button class="detail__close" id="btn-close" aria-label="Cerrar detalle">✕ Cerrar</button>
+      </div>
+    </div>
+    <div class="detail__body">
+      <h3 class="section-title" style="font-size:var(--text-md)">Evolución corte a corte</h3>
+      <p class="section-desc">Línea sólida: % de cumplimiento al corte calculado desde REM. Anillo gris: cifra publicada por DESAM cuando difiere. Línea punteada horizontal: meta. Círculo punteado al final: proyección lineal simple (estimación, no dato).</p>
+      ${lineChart(s)}
+      <p class="proj-note">La proyección es una regresión lineal sobre los cortes disponibles. Con pocos puntos es referencial; gana precisión al cargar la serie histórica completa (2024–2025).</p>
+      ${notaHtml}
+
+      <h3 class="section-title" style="font-size:var(--text-md);margin-top:1.4rem">Cómo se construye este indicador</h3>
+      <p class="section-desc">Valores del último corte disponible (${last?last.mes+' '+last.anio:'—'}). Trazabilidad REM para auditoría.</p>
+      <div class="build">
+        <div class="build__box build__box--num">
+          <span class="build__lbl">Numerador</span>
+          <span class="build__val">${numV}</span>
+          <p class="build__desc">${rem.desc_num||'—'}</p>
+          <div class="build__src">
+            <span class="build__src-tag">Fuente REM</span>
+            <span class="build__cell">${rem.fuente_num||'—'}</span>
+            <div style="margin-top:.3rem"><span class="build__cell">${rem.celda_num||''}</span></div>
+          </div>
+        </div>
+        <div class="build__op" aria-hidden="true">÷</div>
+        <div class="build__box build__box--den">
+          <span class="build__lbl">Denominador</span>
+          <span class="build__val">${denV}</span>
+          <p class="build__desc">${rem.desc_den||'—'}</p>
+          <div class="build__src">
+            <span class="build__src-tag">Fuente</span>
+            <span class="build__cell">${rem.fuente_den||'—'}</span>
+            <div style="margin-top:.3rem"><span class="build__cell">${rem.celda_den||''}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="build__result">
+        <p class="build__result-lbl">Resultado global</p>
+        <p class="build__result-formula">${numV} ÷ ${denV} = ${last&&last.global!==null?fmt(last.global,2)+(cfg.tasa?' (tasa)':'%'):'—'}</p>
+      </div>
+      <div class="build__meta">
+        <p class="build__result-lbl">Cumplimiento al corte (método DESAM)</p>
+        ${pasosCorte(s,last,cfg)}
+        <p class="build__result-val">${last?fmt(last.valor)+'% al corte':'—'}</p>
+      </div>
+
+      <h3 class="section-title" style="font-size:var(--text-md);margin-top:1.4rem">Serie completa</h3>
+      <div class="tbl-scroll">
+        <table class="matrix">
+          <thead><tr><th>Corte</th><th>Al corte</th><th>Global</th><th>Numer.</th><th>Denom.</th><th>Meta corte</th><th>DESAM</th><th>Fuente</th></tr></thead>
+          <tbody>${serieRows}</tbody>
+        </table>
+      </div>
+      ${difHtml}
+    </div>`;
+  $('#overlay').classList.add('is-open');
+  document.body.style.overflow='hidden';
+  $('#btn-close').addEventListener('click',cerrarDetalle);
+}
+function cerrarDetalle(){ $('#overlay').classList.remove('is-open'); document.body.style.overflow=''; }
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') cerrarDetalle(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') cerrarDetalle(); });
+
+// ---- tabs ----
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.classList.remove('is-active'));
+  $$('.panel').forEach(x=>x.classList.remove('is-active'));
+  t.classList.add('is-active');
+  $('#panel-'+t.dataset.panel).classList.add('is-active');
+}));
+
+// ---- Impresión por secciones ----
+const PANEL_NOMBRE={resumen:'Panorama general',mmss:'Metas Sanitarias · Ley 19.813',iaaps:'IAAPS · COMGES 1.12',matriz:'Matriz corte a corte',rem:'Catálogo de procedencia REM',val:'Validación de la actualización'};
+const ICON_PRINT='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-3a2 2 0 012-2h16a2 2 0 012 2v3a2 2 0 01-2 2h-2M6 14h12v7H6z"/></svg>';
+function ultimoCorte(){const e=DATA.eje_tiempo;return e&&e.length?e[e.length-1].label:'';}
+function fijarEncabezadoImpresion(nombreSeccion){
+  $('#print-head').innerHTML=
+    '<p class="print-head__t">Dashboard de Indicadores · '+nombreSeccion+'</p>'+
+    '<div class="print-head__meta"><span><b>CESFAM Tongoy</b> · DEIS 105321 + P.S.R. Guanaqueros</span>'+
+    '<span>Metas Sanitarias (Ley 19.813) e IAAPS (COMGES 1.12)</span>'+
+    '<span>Último corte: <b>'+ultimoCorte()+'</b></span>'+
+    '<span>Generado '+DATA.generado+'</span></div>';
+}
+function imprimirSeccion(panelId){
+  fijarEncabezadoImpresion(PANEL_NOMBRE[panelId]||'');
+  document.body.setAttribute('data-print',panelId);
+  const limpiar=()=>{document.body.removeAttribute('data-print');window.removeEventListener('afterprint',limpiar);};
+  window.addEventListener('afterprint',limpiar);
+  window.print();
+}
+// insertar el botón "Imprimir" en cada panel
+$$('.panel').forEach(p=>{
+  const id=p.id.replace('panel-','');
+  const tools=document.createElement('div');
+  tools.className='panel-tools no-print';
+  tools.innerHTML='<button class="print-btn" type="button" aria-label="Imprimir la sección '+(PANEL_NOMBRE[id]||id)+'">'+ICON_PRINT+'<span class="print-btn__label">Imprimir</span></button>';
+  tools.querySelector('button').addEventListener('click',()=>imprimirSeccion(id));
+  p.insertBefore(tools,p.firstChild);
+});
+// impresión del detalle del indicador (modal)
+document.addEventListener('click',e=>{
+  const b=e.target.closest('#btn-print-detail'); if(!b) return;
+  const t=$('.detail__title'); const nombre=t?t.textContent:'Indicador';
+  fijarEncabezadoImpresion('Ficha de indicador · '+nombre);
+  document.body.classList.add('printing-detail');
+  const limpiar=()=>{document.body.classList.remove('printing-detail');window.removeEventListener('afterprint',limpiar);};
+  window.addEventListener('afterprint',limpiar);
+  window.print();
+});
+
+// ---- init ----
+renderResumen();
+renderGrid('mmss','#grid-mmss');
+renderGrid('iaaps','#grid-iaaps');
+renderMatriz('mmss','#matriz-mmss');
+renderMatriz('iaaps','#matriz-iaaps');
+renderREM();
+renderVal();
+
+</script>
+</body>
+</html>
