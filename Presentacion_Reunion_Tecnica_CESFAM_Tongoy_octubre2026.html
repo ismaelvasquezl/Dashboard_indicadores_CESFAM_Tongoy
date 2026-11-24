@@ -1,0 +1,739 @@
+<title>Indicadores 2026 → 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: deck de diapositivas a pantalla completa; una visible, navegación teclado/botones;
+   barra inferior con reloj, contador y notas de moderador ocultables. */
+:root{
+  --bg:#EEF0F3; --canvas:#FFFFFF; --ink:#1B2229; --ink-soft:#586471; --line:#E3E6EA;
+  --pizarra:#22303A; --pizarra-ink:#22303A; --grafito:#3D4852;
+  --verde:#1B6B45; --verde-bg:#E7F1EB; --ambar:#8A5A00; --ambar-bg:#F6EDD9; --rojo:#9E2B25; --rojo-bg:#F6E4E2;
+  --gris:#6B7580; --gris-bg:#ECEEF0;
+  --accent:#22303A;
+  --f-display:"Archivo","Archivo Black",system-ui,sans-serif;
+  --f-label:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Courier New",monospace;
+  --shadow:0 1px 2px rgba(20,25,30,.06),0 8px 30px rgba(20,25,30,.08);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12171C; --canvas:#1B232A; --ink:#ECEFF2; --ink-soft:#A3B2BE; --line:#2B343C;
+  --pizarra:#9FB8C7; --pizarra-ink:#CFE0EA; --grafito:#B7C4CE;
+  --verde:#4FB084; --verde-bg:#16271F; --ambar:#D7A24A; --ambar-bg:#2A2314; --rojo:#E07A72; --rojo-bg:#2C1917;
+  --gris:#9AA6B0; --gris-bg:#222A31;
+  --accent:#9FB8C7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 34px rgba(0,0,0,.4);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#12171C; --canvas:#1B232A; --ink:#ECEFF2; --ink-soft:#A3B2BE; --line:#2B343C;
+  --pizarra:#9FB8C7; --pizarra-ink:#CFE0EA; --grafito:#B7C4CE;
+  --verde:#4FB084; --verde-bg:#16271F; --ambar:#D7A24A; --ambar-bg:#2A2314; --rojo:#E07A72; --rojo-bg:#2C1917;
+  --gris:#9AA6B0; --gris-bg:#222A31;
+  --accent:#9FB8C7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 34px rgba(0,0,0,.4);
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden}
+*{box-sizing:border-box}
+
+/* ---- Stage & slides ---- */
+#stage{position:fixed;inset:0;bottom:46px;display:flex;align-items:center;justify-content:center;
+  padding:max(14px,env(safe-area-inset-left,0px)) max(20px,env(safe-area-inset-right,0px));}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:clamp(18px,4vw,56px);max-width:1180px;margin:0 auto;left:0;right:0;overflow-y:auto}
+.slide.active{display:flex;animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide.active{animation:none}}
+
+.eyebrow{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.14em;font-weight:600;
+  font-size:clamp(.78rem,1.5vw,1.02rem);color:var(--ink-soft)}
+h1{font-family:var(--f-display);font-weight:800;line-height:1.02;letter-spacing:-.01em;
+  font-size:clamp(2.1rem,6.2vw,4.2rem);margin:.2em 0 .25em;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:800;line-height:1.05;letter-spacing:-.01em;
+  font-size:clamp(1.6rem,4.4vw,2.9rem);margin:.1em 0 .3em;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:700;font-size:clamp(1.15rem,2.6vw,1.7rem);margin:0 0 .3em}
+p{font-size:clamp(1rem,2vw,1.28rem);line-height:1.5;color:var(--ink);margin:.3em 0;max-width:62ch}
+.lead{font-size:clamp(1.1rem,2.3vw,1.5rem);color:var(--ink-soft)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ---- Portada ---- */
+.cover{gap:.1rem}
+.cover .rule{height:5px;width:88px;background:var(--accent);border-radius:3px;margin:.6rem 0 1.1rem}
+.cover .meta{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;margin-top:1.1rem;color:var(--ink-soft);
+  font-family:var(--f-label);text-transform:uppercase;letter-spacing:.07em;font-size:clamp(.9rem,1.7vw,1.1rem)}
+.cover .meta b{color:var(--ink);font-weight:700}
+
+/* ---- Semáforo badge / colors ---- */
+.badge{display:inline-flex;align-items:center;gap:.45em;font-family:var(--f-label);text-transform:uppercase;
+  letter-spacing:.08em;font-weight:600;font-size:clamp(.85rem,1.6vw,1.05rem);padding:.28em .7em;border-radius:999px;line-height:1}
+.dot{width:.62em;height:.62em;border-radius:50%;display:inline-block}
+.s-verde{color:var(--verde);background:var(--verde-bg)} .s-verde .dot{background:var(--verde)}
+.s-ambar{color:var(--ambar);background:var(--ambar-bg)} .s-ambar .dot{background:var(--ambar)}
+.s-rojo{color:var(--rojo);background:var(--rojo-bg)} .s-rojo .dot{background:var(--rojo)}
+.s-gris{color:var(--gris);background:var(--gris-bg)} .s-gris .dot{background:var(--gris)}
+.bar-verde{border-left:6px solid var(--verde)} .bar-ambar{border-left:6px solid var(--ambar)}
+.bar-rojo{border-left:6px solid var(--rojo)} .bar-gris{border-left:6px solid var(--gris)}
+
+/* ---- Indicador (foco) ---- */
+.ind{display:flex;flex-direction:column;gap:.1rem}
+.ind .code{font-family:var(--f-mono);font-size:clamp(.9rem,1.7vw,1.1rem);color:var(--ink-soft);font-weight:600}
+.ind .big{font-family:var(--f-display);font-weight:800;line-height:.92;letter-spacing:-.02em;
+  font-size:clamp(4rem,15vw,8.6rem);font-variant-numeric:tabular-nums}
+.big.c-verde{color:var(--verde)} .big.c-ambar{color:var(--ambar)} .big.c-rojo{color:var(--rojo)} .big.c-gris{color:var(--gris)}
+.ind .unit{font-size:.4em;font-weight:700;color:var(--ink-soft);margin-left:.1em}
+.ind-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem}
+.detalle{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font-family:var(--f-label);text-transform:uppercase;
+  letter-spacing:.06em;font-size:clamp(.92rem,1.8vw,1.18rem);color:var(--ink-soft);margin-top:.2rem}
+.detalle b{color:var(--ink);font-weight:700}
+.rem{font-family:var(--f-mono);font-size:clamp(.82rem,1.5vw,1rem);color:var(--ink-soft);background:var(--gris-bg);
+  border-radius:8px;padding:.4em .7em;display:inline-block;margin-top:.5rem}
+.nota{margin-top:1rem;padding:.75rem 1rem;background:var(--canvas);border-radius:12px;box-shadow:var(--shadow);
+  font-size:clamp(1rem,2vw,1.3rem);line-height:1.45}
+.nota .k{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+  color:var(--ink-soft);font-size:.72em;display:block;margin-bottom:.15em}
+
+/* ---- Tile grid (fortalezas / ronda rápida) ---- */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(.7rem,1.8vw,1.1rem);margin-top:.8rem}
+@media(min-width:820px){.tiles.c4{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--canvas);border-radius:14px;box-shadow:var(--shadow);padding:clamp(.8rem,2vw,1.2rem);
+  display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.tile .code{font-family:var(--f-mono);font-size:.82rem;color:var(--ink-soft);font-weight:600}
+.tile .nm{font-family:var(--f-label);font-size:clamp(1rem,2vw,1.25rem);font-weight:600;line-height:1.1;text-transform:uppercase;letter-spacing:.02em}
+.tile .v{font-family:var(--f-display);font-weight:800;font-size:clamp(1.8rem,4.4vw,2.8rem);line-height:1;font-variant-numeric:tabular-nums}
+.v.c-verde{color:var(--verde)} .v.c-ambar{color:var(--ambar)} .v.c-rojo{color:var(--rojo)} .v.c-gris{color:var(--gris)}
+.tile .sub{font-size:.9rem;color:var(--ink-soft)}
+
+/* ---- Paradoja (dos columnas) ---- */
+.para{display:grid;grid-template-columns:1fr;gap:clamp(.8rem,2vw,1.3rem);margin-top:.6rem}
+@media(min-width:760px){.para{grid-template-columns:1fr 1fr}}
+.col{background:var(--canvas);border-radius:16px;box-shadow:var(--shadow);padding:clamp(1rem,2.4vw,1.5rem)}
+.col h3{font-size:clamp(1.1rem,2.4vw,1.5rem)}
+.col ul{margin:.4rem 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:.4rem}
+.col li{display:flex;gap:.5rem;align-items:baseline;font-size:clamp(.95rem,1.9vw,1.18rem);line-height:1.35}
+.col li .m{font-family:var(--f-mono);font-weight:700;min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
+.col.good li .m{color:var(--verde)} .col.gap li .m{color:var(--rojo)}
+.tesis{margin-top:1rem;font-family:var(--f-display);font-weight:700;font-size:clamp(1.15rem,2.6vw,1.7rem);
+  line-height:1.2;text-wrap:balance}
+.tesis em{font-style:normal;color:var(--rojo)}
+
+/* ---- Tablero ---- */
+.score{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(.7rem,2vw,1.1rem);margin:.8rem 0}
+@media(min-width:720px){.score{grid-template-columns:repeat(4,1fr)}}
+.sc{border-radius:16px;padding:clamp(1rem,2.4vw,1.5rem);text-align:center;box-shadow:var(--shadow)}
+.sc .n{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,7vw,4.2rem);line-height:1}
+.sc .l{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:clamp(.9rem,1.7vw,1.1rem);margin-top:.2rem}
+.sc.v{background:var(--verde-bg);color:var(--verde)} .sc.a{background:var(--ambar-bg);color:var(--ambar)}
+.sc.r{background:var(--rojo-bg);color:var(--rojo)} .sc.g{background:var(--gris-bg);color:var(--gris)}
+
+/* ---- Divisor de bloque ---- */
+.divisor{background:var(--accent);margin:calc(-1*clamp(18px,4vw,56px));padding:clamp(28px,6vw,72px);
+  color:#fff;min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:.4rem}
+:root[data-theme="dark"] .divisor,:root:not([data-theme="light"]) .divisor{color:#0E1419}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .divisor{color:#fff}}
+.divisor .eyebrow{color:rgba(255,255,255,.72)}
+:root[data-theme="dark"] .divisor .eyebrow{color:rgba(14,20,25,.66)}
+.divisor h1{color:inherit;font-size:clamp(2.2rem,6.5vw,4rem)}
+.divisor .blk-no{font-family:var(--f-mono);font-weight:700;font-size:clamp(1rem,2.2vw,1.3rem);opacity:.8}
+.chiprow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  padding:.35em .9em;font-family:var(--f-label);text-transform:uppercase;letter-spacing:.06em;font-weight:600;
+  font-size:clamp(.85rem,1.6vw,1.02rem)}
+:root[data-theme="dark"] .chip{background:rgba(14,20,25,.12);border-color:rgba(14,20,25,.2)}
+.tecnica{margin-top:1.1rem;font-size:clamp(1.02rem,2.1vw,1.35rem);line-height:1.4;max-width:60ch}
+.tecnica b{font-weight:800}
+
+/* ---- Pregunta 2027 ---- */
+.preg{display:flex;flex-direction:column;justify-content:center;gap:.6rem}
+.preg .tag{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:var(--rojo)}
+.preg q, .preg .q{display:block;font-family:var(--f-display);font-weight:800;line-height:1.08;letter-spacing:-.01em;
+  font-size:clamp(1.8rem,4.8vw,3.2rem);text-wrap:balance}
+.preg .q:before{content:"“"} .preg .q:after{content:"”"}
+.preg .subq{margin-top:.6rem;display:flex;flex-direction:column;gap:.35rem}
+.preg .subq div{font-size:clamp(1rem,2vw,1.3rem);color:var(--ink-soft);padding-left:1.1em;position:relative}
+.preg .subq div:before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
+
+/* ---- Acción ---- */
+.accion{display:flex;flex-direction:column;gap:.8rem}
+.accion .frame{background:var(--canvas);border-radius:16px;box-shadow:var(--shadow);padding:clamp(1rem,2.6vw,1.6rem);
+  border-left:6px solid var(--accent)}
+.accion .row{display:grid;grid-template-columns:1fr;gap:.5rem 1rem;margin-top:.5rem}
+@media(min-width:680px){.accion .row{grid-template-columns:2fr 1fr 1fr}}
+.accion .fld{border-bottom:2px dashed var(--line);padding:.4em 0 .5em}
+.accion .fld .k{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--ink-soft);font-size:.8rem}
+.accion .fld .ph{color:var(--ink-soft);font-style:italic;font-size:1.02rem}
+
+/* ---- Priorización ---- */
+.prio{display:grid;grid-template-columns:1fr;gap:.7rem;margin-top:.6rem}
+@media(min-width:720px){.prio{grid-template-columns:1fr 1fr 1fr}}
+.pcard{background:var(--canvas);border-radius:14px;box-shadow:var(--shadow);padding:1rem;display:flex;flex-direction:column;gap:.3rem}
+.pcard .code{font-family:var(--f-mono);font-size:.82rem;color:var(--ink-soft);font-weight:600}
+.pcard .nm{font-family:var(--f-label);text-transform:uppercase;font-weight:600;font-size:clamp(1rem,2vw,1.25rem);line-height:1.1}
+.pcard .v{font-family:var(--f-display);font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--rojo);line-height:1}
+.votos{margin-top:.4rem;font-size:.88rem;color:var(--ink-soft);font-family:var(--f-label);text-transform:uppercase;letter-spacing:.06em}
+.votos .dots{letter-spacing:.2em}
+
+/* ---- Horizonte 2027 ---- */
+.hz{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:.5rem}
+@media(min-width:760px){.hz{grid-template-columns:1fr 1fr}}
+.hz .box{background:var(--canvas);border-radius:16px;box-shadow:var(--shadow);padding:1.2rem}
+.hz .box.keep{border-top:5px solid var(--verde)} .hz .box.go{border-top:5px solid var(--rojo)}
+.hz ul{margin:.4rem 0 0;padding-left:1.1em;display:flex;flex-direction:column;gap:.3rem}
+.hz li{font-size:clamp(.98rem,1.9vw,1.22rem);line-height:1.35}
+
+ul.plain{list-style:none;padding:0;margin:.4rem 0 0;display:flex;flex-direction:column;gap:.55rem}
+ul.plain li{display:flex;gap:.6rem;align-items:baseline;font-size:clamp(1rem,2vw,1.3rem);line-height:1.4}
+ul.plain li .ic{font-family:var(--f-display);font-weight:800;color:var(--accent);min-width:1.4em}
+
+.fuente{position:absolute;bottom:clamp(8px,1.6vw,16px);right:clamp(14px,2vw,28px);
+  font-family:var(--f-mono);font-size:.74rem;color:var(--ink-soft);opacity:.7}
+
+/* ---- Toolbar ---- */
+#bar{position:fixed;left:0;right:0;bottom:0;height:46px;display:flex;align-items:center;gap:.4rem;
+  padding:0 max(10px,env(safe-area-inset-right,0px)) 0 max(10px,env(safe-area-inset-left,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);background:var(--canvas);border-top:1px solid var(--line);z-index:30}
+#bar button{font:inherit;font-family:var(--f-label);text-transform:uppercase;letter-spacing:.04em;font-weight:600;
+  background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.3em .6em;cursor:pointer;font-size:.86rem}
+#bar button:hover{background:var(--bg)}
+#bar button:focus-visible,.slide a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#bar .spacer{flex:1}
+#count{font-family:var(--f-mono);font-size:.9rem;color:var(--ink-soft);min-width:4.4em;text-align:center}
+#clock{font-family:var(--f-mono);font-weight:700;font-size:.98rem;font-variant-numeric:tabular-nums;
+  padding:.2em .5em;border-radius:7px;background:var(--bg)}
+#clock.run{color:var(--verde)}
+#prog{position:fixed;left:0;top:0;height:3px;background:var(--accent);z-index:40;transition:width .25s ease}
+.barlabel{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.05em;font-size:.72rem;color:var(--ink-soft)}
+@media(max-width:600px){.hide-sm{display:none}}
+
+/* ---- Notas de moderador ---- */
+#notes{position:fixed;left:0;right:0;bottom:46px;max-height:42vh;overflow-y:auto;background:var(--pizarra);
+  color:#EAF1F6;padding:1rem 1.2rem calc(1rem + env(safe-area-inset-bottom,0px));z-index:25;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+:root[data-theme="dark"] #notes,:root:not([data-theme="light"]) #notes{background:#0C1116}
+#notes .nh{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.12em;font-weight:700;
+  font-size:.78rem;color:#8FB0C4;margin-bottom:.4rem;display:flex;gap:.6rem;align-items:center}
+#notes .nh .t{background:rgba(255,255,255,.12);border-radius:6px;padding:.15em .55em;font-family:var(--f-mono)}
+#notes .body{font-size:clamp(.95rem,1.8vw,1.12rem);line-height:1.5;max-width:92ch}
+#notes .body b{color:#fff}
+#notes .body .tech{display:inline-block;background:#1B6B45;color:#fff;border-radius:6px;padding:.1em .5em;
+  font-family:var(--f-label);text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:.82em;margin-right:.4em}
+
+/* ---- Help overlay ---- */
+#help{position:fixed;inset:0;background:rgba(10,14,18,.72);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+#help.on{display:flex}
+#help .card{background:var(--canvas);color:var(--ink);border-radius:16px;padding:1.4rem 1.6rem;max-width:460px;box-shadow:var(--shadow)}
+#help h3{margin-top:0}
+#help table{width:100%;border-collapse:collapse;font-size:1rem}
+#help td{padding:.3em 0;border-bottom:1px solid var(--line)}
+#help kbd{font-family:var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.1em .5em;font-size:.9em}
+#help .close{margin-top:1rem}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+
+<div id="prog"></div>
+<div id="stage" aria-live="polite"></div>
+
+<div id="notes" hidden>
+  <div class="nh"><span>Notas de moderador</span><span class="t" id="note-time">—</span><span style="opacity:.6">(tecla N para ocultar)</span></div>
+  <div class="body" id="note-body"></div>
+</div>
+
+<div id="bar">
+  <button id="prev" aria-label="Anterior">◀</button>
+  <button id="next" aria-label="Siguiente">▶</button>
+  <span id="count">1 / 1</span>
+  <span class="spacer"></span>
+  <span class="barlabel hide-sm">Reloj</span>
+  <span id="clock" title="Iniciar/pausar reloj (T) · Reiniciar (R)">00:00</span>
+  <button id="btn-notes" class="hide-sm">Notas (N)</button>
+  <button id="btn-full" class="hide-sm">Pantalla (F)</button>
+  <button id="btn-help" aria-label="Ayuda">?</button>
+</div>
+
+<div id="help"><div class="card">
+  <h3>Controles</h3>
+  <table>
+    <tr><td><kbd>→</kbd> <kbd>Espacio</kbd></td><td>Avanzar</td></tr>
+    <tr><td><kbd>←</kbd></td><td>Retroceder</td></tr>
+    <tr><td><kbd>N</kbd></td><td>Notas de moderador (solo tú las ves)</td></tr>
+    <tr><td><kbd>T</kbd></td><td>Iniciar / pausar reloj de reunión</td></tr>
+    <tr><td><kbd>R</kbd></td><td>Reiniciar reloj</td></tr>
+    <tr><td><kbd>F</kbd></td><td>Pantalla completa</td></tr>
+    <tr><td><kbd>Inicio</kbd> / <kbd>Fin</kbd></td><td>Primera / última diapositiva</td></tr>
+  </table>
+  <button class="close" id="help-close">Cerrar</button>
+</div></div>
+
+<script>
+/* ================= DATOS DE INDICADORES — corte octubre 2026 (consolidado DEIS 105321 + 105405) ================= */
+const IND = {
+  // --- Cardiometabólico ---
+  M14:{code:"IAAPS M14",nm:"Cobertura DM2",pct:100,est:"verde",det:"Global 64,8% · Meta 61,1%",nota:"Lideramos la comuna en cobertura de diabetes."},
+  M15:{code:"IAAPS M15",nm:"Cobertura HTA",pct:100,est:"verde",det:"Global 53,8% · Meta 53,0%"},
+  CEDM2:{code:"MMSS",nm:"Cobertura efectiva DM2",pct:100,est:"verde",det:"Global 27,0% · Meta 27%",nota:"Cumple justo en el límite de la meta: margen cero."},
+  CEHTA:{code:"MMSS",nm:"Cobertura efectiva HTA",pct:96.2,est:"verde",det:"Global 34,6% · Meta 36%"},
+  PIES:{code:"MMSS",nm:"Evaluación de pies en DM2",pct:78.1,est:"ambar",det:"Global 62,5% · Meta 80%",
+        nota:"Cubrimos al diabético pero no le evaluamos los pies: es el eslabón que previene la amputación."},
+  // --- Salud Mental ---
+  M91:{code:"IAAPS M91",nm:"Cobertura Salud Mental",pct:271.6,est:"verde",det:"Global 57,6% · Meta 21,2%",
+       nota:"Triplicamos la meta de ingreso. El problema no es entrar: es salir."},
+  M92:{code:"IAAPS M92",nm:"Tasa de controles Salud Mental",pct:74.0,est:"ambar",det:"Tasa 3,79 · Meta 6,14",
+       nota:"Ingresan muchos, pero cada persona recibe pocos controles: intensidad insuficiente del tratamiento."},
+  M93:{code:"IAAPS M93",nm:"Egresos por alta clínica SM",pct:37.8,est:"rojo",det:"Global 3,78% · Meta 12%",rem:"Num 54 / Den 1.428 bajo control",
+       nota:"Solo 54 altas sobre 1.428 personas bajo control. El ciclo de salud mental casi no se cierra."},
+  // --- Infancia y desarrollo ---
+  M7:{code:"IAAPS M7",nm:"Evaluación DSM 12–23m",pct:100,est:"verde",det:"Global 82,0% · Meta 95,1%",
+      nota:"Evaluamos a casi todos los niños. Contrastar con la recuperación del rezago (abajo)."},
+  RDSM:{code:"MMSS",nm:"Recuperación DSM 12–23m",pct:55.6,est:"rojo",det:"Global 50,0% · Meta 90%",
+        nota:"Detectamos el rezago (M7 al 100%) pero recuperamos solo a la mitad: tamizar sin recuperar."},
+  M17A:{code:"IAAPS M17A",nm:"Menores de 3a libres de caries",pct:100,est:"verde",det:"Global 59,8% · Meta 71,0%"},
+  M17B:{code:"IAAPS M17B",nm:"Normalidad nutricional < 2a",pct:75.5,est:"ambar",det:"Global 46,5% · Meta 61,6%",rem:"Num 94 / Den 202 (consolidado)",
+        nota:"Diferencia con DESAM: ellos usan den 161 (solo Tongoy); el nuestro, 202. Blindar la trazabilidad del dato para 2027."},
+  ODO09:{code:"MMSS",nm:"Control odontológico 0–9",pct:100,est:"verde",det:"Global 44,9% · Meta 48%"},
+  C6:{code:"MMSS",nm:"6 años libres de caries",pct:92.7,est:"verde",det:"Global 17,0% · Meta 22%"},
+  // --- Mujer y adolescente ---
+  M12:{code:"IAAPS M12",nm:"Ingreso precoz a embarazo",pct:91.2,est:"verde",det:"Global 86,1% · Meta 94,3%",
+       nota:"Consolidado 74/86. DESAM marca 'No considera' a Guanaqueros: verificar criterio de consolidación."},
+  M13:{code:"IAAPS M13",nm:"Anticoncepción en adolescentes",pct:88.7,est:"ambar",det:"Global 21,1% · Meta 23,8%",
+       nota:"La adolescente ingresa, pero la cobertura de método anticonceptivo queda corta."},
+  M61A:{code:"IAAPS M61A",nm:"EMP mujeres 20–64",pct:100,est:"verde",det:"Global 25,5% · Meta 22,6%"},
+  M61B:{code:"IAAPS M61B",nm:"EMP hombres 20–64",pct:88.4,est:"ambar",det:"Global 14,4% · Meta 19,6%",
+        nota:"El hombre se controla mucho menos que la mujer: brecha de género en el examen de medicina preventiva."},
+  M62:{code:"IAAPS M62",nm:"EMP 65 y más",pct:100,est:"verde",det:"Global 39,6% · Meta 44,6%"},
+  M8:{code:"IAAPS M8",nm:"Control adolescente 10–19",pct:100,est:"verde",det:"Global 24,2% · Meta 22,2%"},
+  PAP:{code:"MMSS",nm:"Detección precoz cáncer cervicouterino",pct:null,est:"gris",det:"Sin dato en el corte",
+       nota:"Punto ciego: sin PAP no hay tamizaje poblacional. Recuperar el registro es la primera meta 2027."},
+  // --- Transversal / respiratorio / LME ---
+  M3:{code:"IAAPS M3",nm:"Consultas médicas de morbilidad",pct:88.8,est:"ambar",det:"Tasa 0,60 · Meta 0,81",rem:"Num 6.755 / Den 11.273 (consolidado)",
+      nota:"Meta 2026 corregida a 0,81 (antes 0,80): ahora el dato cuadra exacto con DESAM."},
+  M4:{code:"IAAPS M4",nm:"Resolutividad en APS",pct:100,est:"verde",det:"Índice 5,36 · Meta 10"},
+  M5:{code:"IAAPS M5",nm:"Visita Domiciliaria Integral",pct:98.2,est:"verde",det:"Tasa 0,18 · Meta 0,22"},
+  ASMA:{code:"MMSS",nm:"Cobertura Asma + EPOC",pct:35.3,est:"rojo",det:"Global 7,2% · Meta 20,3%",
+        nota:"7% de cobertura frente a una prevalencia país mucho mayor: hay pacientes respiratorios sin pesquisar."},
+  LME:{code:"MMSS",nm:"Lactancia materna exclusiva 6º mes",pct:70.0,est:"ambar",det:"Global 42,0% · Meta 60%",remove:true,
+       nota:"La meta se retira en 2027. ¿La seguimos midiendo como señal de calidad del vínculo con la díada?"}
+};
+const estName={verde:"Cumple",ambar:"En riesgo",rojo:"Crítico",gris:"Sin dato"};
+
+/* ================= HELPERS DE RENDER ================= */
+const colorClass=e=>({verde:"c-verde",ambar:"c-ambar",rojo:"c-rojo",gris:"c-gris"}[e]);
+const barClass=e=>({verde:"bar-verde",ambar:"bar-ambar",rojo:"bar-rojo",gris:"bar-gris"}[e]);
+const sClass=e=>({verde:"s-verde",ambar:"s-ambar",rojo:"s-rojo",gris:"s-gris"}[e]);
+const pctTxt=p=>p===null?"s/d":String(p).replace(".",",");
+
+function badge(e){return `<span class="badge ${sClass(e)}"><span class="dot"></span>${estName[e]}</span>`;}
+
+function indFull(key,bloque){
+  const d=IND[key];
+  return {time:"",notes:"",html:`<div class="slide-pad ind ${barClass(d.est)}" style="border-left-width:8px;padding-left:clamp(14px,3vw,34px)">
+     <div class="eyebrow">${bloque} · ${d.code}</div>
+     <div class="ind-head">
+       <h2 style="margin:.15em 0 0">${d.nm}</h2>
+       ${badge(d.est)}
+     </div>
+     <div class="big ${colorClass(d.est)}">${pctTxt(d.pct)}${d.pct!==null?'<span class="unit">% al corte</span>':''}</div>
+     <div class="detalle">${d.det.split(" · ").map(x=>{const[a,b]=x.split(/ (?=\d|Meta|Sin)/);return `<span>${x}</span>`;}).join("")}</div>
+     ${d.rem?`<div class="rem">REM · ${d.rem}</div>`:""}
+     ${d.nota?`<div class="nota"><span class="k">Lectura salubrista</span>${d.nota}</div>`:""}
+     ${d.remove?`<div class="rem" style="background:var(--rojo-bg);color:var(--rojo)">⚑ Meta que se retira en 2027</div>`:""}
+  </div>`};
+}
+function tileSlide(eyebrow,title,keys){
+  const tiles=keys.map(k=>{const d=IND[k];return `<div class="tile ${barClass(d.est)}">
+     <span class="code">${d.code}</span>
+     <span class="nm">${d.nm}</span>
+     <span class="v ${colorClass(d.est)}">${pctTxt(d.pct)}${d.pct!==null?'<span style="font-size:.5em;color:var(--ink-soft)">%</span>':''}</span>
+     <span class="sub">${d.det}</span>
+   </div>`}).join("");
+  return `<div class="slide-pad"><div class="eyebrow">${eyebrow}</div><h2>${title}</h2>
+     <div class="tiles c4">${tiles}</div></div>`;
+}
+
+/* ================= SECUENCIA DE DIAPOSITIVAS ================= */
+const S=[];
+const push=(html,notes,time)=>S.push({html,notes:notes||"",time:time||""});
+
+/* 1 · Portada */
+push(`<div class="slide-pad cover">
+  <div class="eyebrow">Reunión técnica mensual · CESFAM Tongoy</div>
+  <h1>Indicadores 2026,<br>estrategia 2027</h1>
+  <div class="rule"></div>
+  <p class="lead">Leemos nuestros indicadores uno a uno y decidimos, juntos, cómo enfrentamos el próximo año.</p>
+  <div class="meta">
+    <span>Corte <b>Octubre 2026</b></span>
+    <span>Marco <b>MMSS · IAAPS · MAIS</b></span>
+    <span>Consolidado <b>DEIS 105321 + 105405</b></span>
+    <span>24 nov 2026</span>
+  </div>
+</div>`,
+`<span class="tech">Apertura · 2 min</span> Antes de proyectar al público, inicia el reloj con <b>T</b>. Da la bienvenida en una frase y nombra el propósito: <b>"hoy no revisamos el pasado, diseñamos el 2027"</b>. No leas la portada en voz alta — el equipo ya la ve. Pasa rápido a las reglas.`,"00:00");
+
+/* 2 · Reglas del juego */
+push(`<div class="slide-pad">
+  <div class="eyebrow">Cómo trabajamos hoy · 60 minutos</div>
+  <h2>Cuatro reglas para no perdernos</h2>
+  <ul class="plain">
+    <li><span class="ic">1</span><span><b>Semáforo-triaje.</b> El <span class="badge s-verde"><span class="dot"></span>verde</span> se celebra en 20 segundos. El <span class="badge s-ambar"><span class="dot"></span>ámbar</span> y el <span class="badge s-rojo"><span class="dot"></span>rojo</span> es donde conversamos.</span></li>
+    <li><span class="ic">2</span><span><b>Una pregunta → una acción.</b> Cada bloque cierra con <b>una</b> acción concreta y <b>un</b> responsable. Nada queda en el aire.</span></li>
+    <li><span class="ic">3</span><span><b>Estacionamiento.</b> Lo que se sale de tema se anota en la pizarra y sigue. No secuestramos la reunión.</span></li>
+    <li><span class="ic">4</span><span><b>Relator por bloque.</b> Alguien distinto anota la acción de cada bloque. Todos sostienen el hilo.</span></li>
+  </ul>
+</div>`,
+`<span class="tech">Encuadre · 1,5 min</span> Esta diapositiva es tu contrato con el equipo disperso. Asigna <b>ya</b> los relatores (uno por bloque, cinco personas) — tener un rol mantiene a la gente presente. Señala dónde está la pizarra del "estacionamiento". Recuerda la regla de oro: <b>si está verde, avanzamos; no lo discutimos solo porque está ahí.</b>`,"02:00");
+
+/* 3 · Mensaje único: Paradoja de Tongoy */
+push(`<div class="slide-pad">
+  <div class="eyebrow">El mensaje de hoy</div>
+  <h2>La Paradoja de Tongoy</h2>
+  <div class="para">
+    <div class="col good"><h3>Abrimos la puerta</h3>
+      <ul>
+        <li><span class="m">100%</span> Cobertura DM2 e HTA (líderes comuna)</li>
+        <li><span class="m">271%</span> Ingreso a Salud Mental</li>
+        <li><span class="m">100%</span> Evaluación DSM del niño</li>
+        <li><span class="m">100%</span> EMP mujer y persona mayor</li>
+      </ul></div>
+    <div class="col gap"><h3>Cerramos el ciclo</h3>
+      <ul>
+        <li><span class="m">38%</span> Egresos de Salud Mental</li>
+        <li><span class="m">56%</span> Recuperación del rezago DSM</li>
+        <li><span class="m">78%</span> Evaluación de pies en DM2</li>
+        <li><span class="m">35%</span> Cobertura Asma + EPOC</li>
+      </ul></div>
+  </div>
+  <p class="tesis">Somos excelentes <b>abriendo la puerta de entrada</b>. Nuestro desafío 2027 es <em>cerrar el ciclo de cuidado</em>.</p>
+</div>`,
+`<span class="tech">Mensaje ancla · 2 min</span> Esta es la idea que quieres que recuerden si olvidan todo lo demás. Léela como una historia, no como una tabla: <b>"entramos muy bien, nos cuesta terminar"</b>. Los tres críticos de hoy (egresos SM, recuperación DSM, Asma/EPOC) son todos de cierre de ciclo — no es casualidad. Deja la tesis en pantalla unos segundos en silencio antes de avanzar.`,"04:00");
+
+/* 4 · Tablero general */
+push(`<div class="slide-pad">
+  <div class="eyebrow">Panorama · 26 indicadores · corte octubre</div>
+  <h2>¿Dónde estamos hoy?</h2>
+  <div class="score">
+    <div class="sc v"><div class="n">15</div><div class="l">Cumplen</div></div>
+    <div class="sc a"><div class="n">7</div><div class="l">En riesgo</div></div>
+    <div class="sc r"><div class="n">3</div><div class="l">Críticos</div></div>
+    <div class="sc g"><div class="n">1</div><div class="l">Sin dato</div></div>
+  </div>
+  <p class="lead">Antes de avanzar: <b>¿cuál creen ustedes que será nuestro mayor desafío 2027?</b> A mano alzada.</p>
+</div>`,
+`<span class="tech">Voto a mano alzada · 3 min</span> <b>Activa antes de revelar.</b> Pide que cada persona levante la mano por el indicador que cree más difícil para 2027 — sin discutir todavía. Anota las 2–3 más votadas en la pizarra; las retomamos en la priorización final. El voto temprano compromete la atención: ya "apostaron" algo. No corrijas sus predicciones aún.`,"06:00");
+
+/* 5 · Agenda con tiempos */
+push(`<div class="slide-pad">
+  <div class="eyebrow">Ruta de hoy</div>
+  <h2>Cinco bloques, un cierre</h2>
+  <ul class="plain">
+    <li><span class="ic mono" style="color:var(--accent)">A</span><span><b>Cardiometabólico</b> — nuestra fortaleza · <span class="mono">10–17</span></span></li>
+    <li><span class="ic mono" style="color:var(--accent)">B</span><span><b>Salud Mental</b> — el ciclo roto · <span class="mono">17–25</span></span></li>
+    <li><span class="ic mono" style="color:var(--accent)">C</span><span><b>Infancia y desarrollo</b> — evaluar vs. recuperar · <span class="mono">25–33</span></span></li>
+    <li><span class="ic mono" style="color:var(--accent)">D</span><span><b>Mujer y adolescente</b> — a quién no estamos llegando · <span class="mono">34–41</span></span></li>
+    <li><span class="ic mono" style="color:var(--accent)">E</span><span><b>Transversal y respiratorio</b> + lactancia · <span class="mono">41–48</span></span></li>
+    <li><span class="ic mono" style="color:var(--rojo)">★</span><span><b>Priorización 2027</b> y compromisos · <span class="mono">48–59</span></span></li>
+  </ul>
+</div>`,
+`<span class="tech">Mapa · 1 min</span> Muestra la ruta para que el equipo disperso sepa que hay un final visible. Señala el reloj de la barra: <b>"nos guiamos por estos tiempos; si un tema se extiende, va al estacionamiento"</b>. No te detengas aquí.`,"09:00");
+
+/* ===== BLOQUE A ===== */
+push(`<div class="divisor"><div class="blk-no">Bloque A · 10–17 min</div>
+  <div class="eyebrow">Nuestra fortaleza</div>
+  <h1>Cardiometabólico</h1>
+  <div class="chiprow"><span class="chip">DM2 · HTA</span><span class="chip">Pie diabético</span><span class="chip">Cobertura efectiva</span></div>
+  <div class="tecnica"><b>Técnica: celebración + provocación.</b> 20 segundos para reconocer lo que hacemos bien, y acto seguido la pregunta incómoda que lo pone a prueba.</div>
+</div>`,
+`<span class="tech">Transición · 20 s</span> Nombra al relator del bloque A. Entra con energía positiva: este bloque es donde brillamos, y conviene empezar celebrando para enganchar. Pero avisa: <b>"lo bueno lo miramos rápido; el pie diabético nos va a hacer pensar"</b>.`,"10:00");
+push(tileSlide("Bloque A · Fortalezas","Lo que sostenemos",["M14","M15","CEDM2","CEHTA"]),
+`<span class="tech">Ronda rápida · 1 min</span> Léelos como una sola buena noticia: <b>lideramos la comuna en cobertura cardiometabólica</b>. Una sola advertencia: la cobertura efectiva DM2 cumple <b>justo</b> en el límite (27% vs 27%) — un mal trimestre y cae. No abras discusión aquí; es celebración.`);
+S.push({...indFull("PIES","Bloque A · Foco"),notes:`<span class="tech">Discusión · 2,5 min</span> Aquí frenas. La pregunta provocadora: <b>"¿de qué sirve cubrir al diabético si no le miramos los pies?"</b> El pie diabético es la antesala de la amputación. Deja que 2–3 personas respondan por qué cae la evaluación (¿agenda?, ¿instrumento?, ¿registro?). No resuelvas tú: recoge causas para la acción.`});
+push(`<div class="slide-pad preg">
+  <div class="tag">Pregunta 2027 · Bloque A</div>
+  <div class="q">Para 2027, ¿cómo convertimos cobertura en compensación?</div>
+  <div class="subq">
+    <div>¿La cobertura DM2/HTA se traduce en HbA1c y presión arterial controladas?</div>
+    <div>¿Es la evaluación del pie diabético el próximo salto de calidad que evita la amputación?</div>
+  </div>
+</div>`,
+`<span class="tech">Pregunta abierta · 1,5 min</span> No busques consenso, busca ideas. Lanza la pregunta y guarda silencio 5 segundos (el silencio incomoda y provoca respuesta). Si nadie parte, nombra a alguien: <b>"Francisca, ¿tú qué ves?"</b>. Reconduce de "cobertura" a "¿el paciente está realmente compensado?".`);
+push(`<div class="slide-pad accion"><div class="eyebrow">Cierre Bloque A</div><h2>Una acción, un responsable</h2>
+  <div class="frame bar-verde" style="border-left-color:var(--verde)">
+   <div class="row">
+     <div class="fld"><div class="k">Acción comprometida</div><div class="ph">p. ej. meta interna de evaluación de pies en el control crónico</div></div>
+     <div class="fld"><div class="k">Responsable</div><div class="ph">nombre</div></div>
+     <div class="fld"><div class="k">Plazo</div><div class="ph">fecha</div></div>
+   </div>
+  </div>
+</div>`,
+`<span class="tech">Compromiso · 1 min</span> El relator dicta en voz alta la acción mientras tú la anotas aquí (o en la pizarra). Debe ser <b>concreta y con responsable</b>: no "mejorar pie diabético" sino "incorporar evaluación de pie a todo control crónico, responsable X, revisión en enero". Confírmala con el responsable mirándolo. Avanza.`);
+
+/* ===== BLOQUE B ===== */
+push(`<div class="divisor"><div class="blk-no">Bloque B · 17–25 min</div>
+  <div class="eyebrow">El ciclo roto</div>
+  <h1>Salud Mental</h1>
+  <div class="chiprow"><span class="chip">Cobertura 271%</span><span class="chip">Controles</span><span class="chip">Egresos 38%</span></div>
+  <div class="tecnica"><b>Técnica: los 5 por qué.</b> Tomamos el indicador crítico y preguntamos "¿por qué?" cinco veces hasta llegar a la causa raíz, no al síntoma.</div>
+</div>`,
+`<span class="tech">Transición · 20 s</span> Relator del bloque B. Cambia el tono: venimos de celebrar, ahora entramos al corazón de la paradoja. Plantea el embudo en una frase: <b>"ingresamos al 271%, controlamos al 74%, egresamos al 38%. ¿Dónde se queda la gente?"</b>`,"17:00");
+S.push({...indFull("M91","Bloque B · Entrada"),notes:`<span class="tech">Contexto · 40 s</span> Verde, pero no para celebrar: es la boca del embudo. 271% significa que ingresamos muchísimo. Úsalo como preparación: <b>"entrar no es el problema"</b>. Avanza rápido.`});
+S.push({...indFull("M92","Bloque B · Foco"),notes:`<span class="tech">Puente · 1 min</span> La intensidad del tratamiento es baja: muchos ingresos, pocos controles por persona. Pregunta de sondeo: <b>"¿tenemos horas suficientes, o ingresamos más de lo que podemos tratar?"</b> Recoge una o dos voces y pasa al crítico.`});
+S.push({...indFull("M93","Bloque B · Crítico"),notes:`<span class="tech">Los 5 por qué · 3 min</span> Este es el indicador del día. Aplica la técnica en vivo, anotando en pizarra: <b>"¿Por qué solo 54 altas de 1.428?"</b> → respuesta → <b>"¿y por qué eso?"</b> ×5. Lleva al equipo del síntoma (registro) a la causa raíz (¿no hay criterios de alta?, ¿el alta depende solo del psicólogo?, ¿falta flujo de egreso?). Para en el 5º por qué.`});
+push(`<div class="slide-pad preg">
+  <div class="tag">Pregunta 2027 · Bloque B</div>
+  <div class="q">¿Por qué ingresamos tan bien pero casi no damos de alta?</div>
+  <div class="subq">
+    <div>¿Es un problema de registro, de criterios de egreso, o de cupos?</div>
+    <div>¿De quién es la responsabilidad del alta: solo del psicólogo, o de todo el equipo?</div>
+  </div>
+</div>`,
+`<span class="tech">Convergencia · 1 min</span> Después de los 5 por qué, esta pregunta cierra el razonamiento. Empuja hacia una definición compartida de "alta clínica" — es muy probable que el problema real sea que no existe un criterio común de egreso. Esa es la semilla de la acción.`);
+push(`<div class="slide-pad accion"><div class="eyebrow">Cierre Bloque B</div><h2>Una acción, un responsable</h2>
+  <div class="frame" style="border-left-color:var(--rojo)">
+   <div class="row">
+     <div class="fld"><div class="k">Acción comprometida</div><div class="ph">p. ej. protocolo de criterios de egreso de SM revisado por el equipo</div></div>
+     <div class="fld"><div class="k">Responsable</div><div class="ph">nombre</div></div>
+     <div class="fld"><div class="k">Plazo</div><div class="ph">fecha</div></div>
+   </div>
+  </div>
+</div>`,
+`<span class="tech">Compromiso · 1 min</span> El relator fija la acción. Apunta a algo estructural (un criterio común de alta, un flujo de egreso), no a "registrar mejor". Confirma responsable y plazo. Este es el compromiso más importante del día: déjalo bien cerrado.`);
+
+/* ===== BLOQUE C ===== */
+push(`<div class="divisor"><div class="blk-no">Bloque C · 25–33 min</div>
+  <div class="eyebrow">Evaluar vs. recuperar</div>
+  <h1>Infancia y desarrollo</h1>
+  <div class="chiprow"><span class="chip">DSM</span><span class="chip">Nutrición</span><span class="chip">Odontología</span></div>
+  <div class="tecnica"><b>Técnica: piensa–conversa–comparte.</b> 60 s para pensar solos, 90 s en parejas, y recién ahí compartimos. Nadie se esconde en el silencio del grupo grande.</div>
+</div>`,
+`<span class="tech">Transición · 20 s</span> Relator del bloque C. Este bloque repite el patrón de la paradoja en los niños: evaluamos al 100%, recuperamos a la mitad. Anúncialo como un eco: <b>"lo mismo que en salud mental, ahora en el desarrollo infantil"</b>.`,"25:00");
+push(tileSlide("Bloque C · Lo que está bien","Base infantil sólida",["M7","M17A","ODO09","C6"]),
+`<span class="tech">Ronda rápida · 1 min</span> Celebra brevemente: la base de atención infantil es fuerte. Pero <b>deja caer la trampa</b>: el M7 (evaluación DSM) está al 100%… recuerda ese número, porque la recuperación (siguiente lámina) cuenta otra historia.`);
+S.push({...indFull("RDSM","Bloque C · Crítico"),notes:`<span class="tech">Contraste · 1,5 min</span> Pon los dos números juntos en voz alta: <b>evaluamos al 100%, recuperamos al 56%</b>. Evaluar es ver el problema; recuperar es resolverlo. Pregunta: "¿dónde se nos pierde el niño con rezago entre el tamizaje y el alta?". Guarda las respuestas para el think-pair-share.`});
+S.push({...indFull("M17B","Bloque C · Foco + dato"),notes:`<span class="tech">Piensa–conversa–comparte · 2,5 min</span> Dos capas: (1) el indicador está en riesgo; (2) <b>hay una diferencia metodológica con DESAM</b> — ellos usan denominador 161 (solo Tongoy), el nuestro 202 (consolidado). Explícalo en 30 s y usa la técnica: que piensen solos, luego en parejas "¿cómo blindamos nuestro dato y cómo recuperamos la nutrición del menor de 2?", y recién comparten 2 parejas. Mantiene a todos activos.`});
+push(`<div class="slide-pad preg">
+  <div class="tag">Pregunta 2027 · Bloque C</div>
+  <div class="q">¿Qué pasa entre el tamizaje y la recuperación del niño con rezago?</div>
+  <div class="subq">
+    <div>Evaluamos casi a todos; recuperamos a la mitad. ¿Falta reevaluación, estimulación, o seguimiento?</div>
+    <div>¿Cómo aseguramos que nuestro dato de nutrición resista la revisión de DESAM en 2027?</div>
+  </div>
+</div>`,
+`<span class="tech">Comparte · 1 min</span> Recoge lo que trabajaron en parejas. Busca el eslabón concreto que se rompe (p. ej. no hay agenda de reevaluación del rezago). Dos aportes bastan; no dejes que se extienda, lo demás al estacionamiento.`);
+push(`<div class="slide-pad accion"><div class="eyebrow">Cierre Bloque C</div><h2>Una acción, un responsable</h2>
+  <div class="frame" style="border-left-color:var(--rojo)">
+   <div class="row">
+     <div class="fld"><div class="k">Acción comprometida</div><div class="ph">p. ej. flujo de reevaluación del rezago DSM a los 3 meses</div></div>
+     <div class="fld"><div class="k">Responsable</div><div class="ph">nombre</div></div>
+     <div class="fld"><div class="k">Plazo</div><div class="ph">fecha</div></div>
+   </div>
+  </div>
+</div>`,
+`<span class="tech">Compromiso · 1 min</span> Relator fija la acción. Puede haber dos micro-acciones (recuperación DSM + blindaje del dato nutricional); si es así, elige la de mayor impacto como compromiso del bloque y la otra al estacionamiento. Confirma y avanza al respiro.`);
+
+/* Energizante */
+push(`<div class="slide-pad" style="align-items:center;text-align:center">
+  <div class="eyebrow">Mitad de camino · ~33 min</div>
+  <h2>30 segundos de aire</h2>
+  <p class="lead" style="max-width:40ch;margin:0 auto">De pie, estiramos, y en una palabra: ¿cómo va la energía de este equipo para pensar el 2027?</p>
+</div>`,
+`<span class="tech">Energizante · 1 min</span> El punto medio es donde un equipo disperso se desconecta. Haz que todos se pongan de pie 30 segundos — cambio físico = reinicio de atención. Pide una palabra por persona sobre su energía. Es liviano a propósito; recupera foco para la segunda mitad.`,"33:00");
+
+/* ===== BLOQUE D ===== */
+push(`<div class="divisor"><div class="blk-no">Bloque D · 34–41 min</div>
+  <div class="eyebrow">¿A quién no estamos llegando?</div>
+  <h1>Mujer y adolescente</h1>
+  <div class="chiprow"><span class="chip">Embarazo</span><span class="chip">Adolescencia</span><span class="chip">EMP · PAP</span></div>
+  <div class="tecnica"><b>Técnica: lluvia de ideas relámpago.</b> 60 s, ideas sin filtro ni crítica, todas a la pizarra. Cantidad sobre calidad; después elegimos.</div>
+</div>`,
+`<span class="tech">Transición · 20 s</span> Relator del bloque D. El foco cambia de "qué cerramos" a "a quién no llegamos": el hombre adulto, el adolescente varón, y un PAP sin dato. Plantéalo como una búsqueda de población oculta.`,"34:00");
+push(tileSlide("Bloque D · Lo que está bien","Ciclo de la mujer, bien encaminado",["M12","M61A","M62","M8"]),
+`<span class="tech">Ronda rápida · 1 min</span> Celebra: ingreso precoz de embarazo, EMP de mujer y persona mayor, control del adolescente — todos cumplen. Nota al pasar sobre M12: hay un detalle de consolidación con DESAM ('No considera' Guanaqueros), pero no lo discutas aquí, solo que conste.`);
+S.push({...indFull("M61B","Bloque D · Foco"),notes:`<span class="tech">Sondeo · 1 min</span> Contrasta con la mujer (M61A al 100%): <b>el hombre se controla mucho menos</b>. Pregunta abierta corta: "¿por qué el hombre no viene?" — horario laboral, cultura, oferta. Recoge para la lluvia de ideas.`});
+S.push({...indFull("M13","Bloque D · Foco"),notes:`<span class="tech">Puente · 45 s</span> La adolescente ingresa pero la cobertura de anticoncepción queda corta. Conéctalo con el adolescente varón del M61B: ¿los estamos perdiendo a ambos? Avanza al punto ciego.`});
+S.push({...indFull("PAP","Bloque D · Punto ciego"),notes:`<span class="tech">Lluvia relámpago · 2 min</span> Sin dato = no lo estamos midiendo, nuestro punto ciego. Lanza la lluvia de ideas de 60 s: <b>"¿cómo acercamos al hombre y al adolescente, y cómo recuperamos el PAP?"</b> Todas las ideas a la pizarra sin juzgar. Cuando pare, marca con un círculo las 2 más potentes. Lo demás queda registrado.`});
+push(`<div class="slide-pad preg">
+  <div class="tag">Pregunta 2027 · Bloque D</div>
+  <div class="q">¿Cómo acercamos al varón al CESFAM y recuperamos el PAP?</div>
+  <div class="subq">
+    <div>El hombre y el adolescente varón se controlan menos. ¿Horario extendido, oferta dirigida, búsqueda activa?</div>
+    <div>El cáncer cervicouterino está sin dato: ¿cómo reconstruimos el registro del tamizaje?</div>
+  </div>
+</div>`,
+`<span class="tech">Decisión · 1 min</span> De las ideas circuladas en la pizarra, pide al equipo elegir la más viable por votación de manos. Esa se vuelve la acción. Rapidez: ya generaron el material, aquí solo eligen.`);
+push(`<div class="slide-pad accion"><div class="eyebrow">Cierre Bloque D</div><h2>Una acción, un responsable</h2>
+  <div class="frame" style="border-left-color:var(--ambar)">
+   <div class="row">
+     <div class="fld"><div class="k">Acción comprometida</div><div class="ph">p. ej. estrategia de captación del varón + recuperación del registro PAP</div></div>
+     <div class="fld"><div class="k">Responsable</div><div class="ph">nombre</div></div>
+     <div class="fld"><div class="k">Plazo</div><div class="ph">fecha</div></div>
+   </div>
+  </div>
+</div>`,
+`<span class="tech">Compromiso · 1 min</span> Relator fija la acción elegida. Confirma responsable y plazo. Avanza.`);
+
+/* ===== BLOQUE E ===== */
+push(`<div class="divisor"><div class="blk-no">Bloque E · 41–48 min</div>
+  <div class="eyebrow">Transversal, respiratorio y lactancia</div>
+  <h1>Lo que atraviesa todo</h1>
+  <div class="chiprow"><span class="chip">Morbilidad · Resolutividad</span><span class="chip">VDI</span><span class="chip">Asma/EPOC</span><span class="chip">LME ⚑</span></div>
+  <div class="tecnica"><b>Técnica: punto de acción rápido.</b> Dos focos fuertes (Asma/EPOC y lactancia), una acción cada uno, sin rodeos. Cerramos el recorrido con ritmo.</div>
+</div>`,
+`<span class="tech">Transición · 20 s</span> Relator del bloque E. Último bloque de indicadores: la gente ya está cansada, mantén el ritmo alto. Anuncia los dos focos: el respiratorio crónico sub-pesquisado, y la lactancia que se despide como meta.`,"41:00");
+push(tileSlide("Bloque E · Lo que está bien","Resolutividad y terreno",["M4","M5"]),
+`<span class="tech">Ronda rápida · 40 s</span> Resolvemos bien en APS (M4) y el terreno (VDI) está sólido. Buenas noticias breves. Avanza.`);
+S.push({...indFull("M3","Bloque E · Dato corregido"),notes:`<span class="tech">Nota técnica · 45 s</span> En riesgo, pero la buena noticia es de método: <b>corregimos la meta a 0,81 y ahora cuadra exacto con DESAM</b>. Es un ejemplo de por qué construir el dato nosotros nos da control. 45 segundos, no más.`});
+S.push({...indFull("ASMA","Bloque E · Crítico"),notes:`<span class="tech">Punto de acción rápido · 1,5 min</span> Tercer crítico del día. La provocación concreta: <b>"7% de cobertura, pero la prevalencia país es mucho mayor — ¿dónde están esos pacientes?"</b> Propón la hipótesis operativa: cruzar inhaladores dispensados en farmacia con población bajo control para encontrar al paciente oculto. Pide una acción directa.`});
+S.push({...indFull("LME","Bloque E · Se retira 2027"),notes:`<span class="tech">Provocación de cierre · 1,5 min</span> Aquí está el punto que pediste destacar: <b>la meta de lactancia se retira en 2027</b>. Pregunta honesta al equipo: "si deja de ser meta, ¿la seguimos midiendo?". Es una conversación sobre para qué medimos — ¿por el puntaje o por la díada? Sirve para introducir la mirada 2027.`});
+push(`<div class="slide-pad preg">
+  <div class="tag">Pregunta 2027 · Bloque E</div>
+  <div class="q">¿Dónde está el paciente respiratorio que no vemos?</div>
+  <div class="subq">
+    <div>¿Sin diagnosticar, sin registrar, o sin controlar? ¿Cruzamos farmacia con población bajo control?</div>
+    <div>Lactancia deja de ser meta en 2027: ¿la seguimos midiendo como señal de calidad del vínculo?</div>
+  </div>
+</div>`,
+`<span class="tech">Doble cierre · 1 min</span> Dos preguntas, dos respuestas rápidas. Para Asma/EPOC busca el compromiso de la búsqueda activa. Para lactancia, no necesitas resolver: deja la pregunta abierta, es la bisagra hacia la priorización 2027.`);
+push(`<div class="slide-pad accion"><div class="eyebrow">Cierre Bloque E</div><h2>Una acción, un responsable</h2>
+  <div class="frame" style="border-left-color:var(--rojo)">
+   <div class="row">
+     <div class="fld"><div class="k">Acción comprometida</div><div class="ph">p. ej. cruce farmacia–población bajo control para pesquisa respiratoria</div></div>
+     <div class="fld"><div class="k">Responsable</div><div class="ph">nombre</div></div>
+     <div class="fld"><div class="k">Plazo</div><div class="ph">fecha</div></div>
+   </div>
+  </div>
+</div>`,
+`<span class="tech">Compromiso · 1 min</span> Relator fija la acción de Asma/EPOC (la de mayor impacto sanitario del bloque). Confirma y pasa a la priorización — el momento de síntesis.`);
+
+/* ===== PRIORIZACIÓN ===== */
+push(`<div class="slide-pad">
+  <div class="eyebrow">Síntesis · 48–54 min</div>
+  <h2>¿Dónde ponemos la energía en 2027?</h2>
+  <div class="prio">
+    <div class="pcard bar-rojo"><span class="code">IAAPS M93</span><span class="nm">Egresos Salud Mental</span><span class="v">38%</span><div class="votos">Votos: <span class="dots">○ ○ ○ ○ ○</span></div></div>
+    <div class="pcard bar-rojo"><span class="code">MMSS</span><span class="nm">Recuperación DSM</span><span class="v">56%</span><div class="votos">Votos: <span class="dots">○ ○ ○ ○ ○</span></div></div>
+    <div class="pcard bar-rojo"><span class="code">MMSS</span><span class="nm">Asma + EPOC</span><span class="v">35%</span><div class="votos">Votos: <span class="dots">○ ○ ○ ○ ○</span></div></div>
+  </div>
+  <p class="lead">Tres puntos por persona. Repártelos entre los críticos y los "en riesgo" que más les preocupan.</p>
+</div>`,
+`<span class="tech">Votación con puntos · 4 min</span> La técnica estrella del cierre. Cada persona tiene <b>3 puntos</b> para repartir (en pizarra o en papel) entre los indicadores que debemos atacar en 2027 — puede concentrarlos o repartirlos. Incluye los ámbar que surgieron (pies DM2, M92, M13, M61B). Cuenta los puntos: los tres más votados entran al plan 2027. Conecta con las predicciones del inicio: ¿acertaron?`,"48:00");
+
+/* ===== HORIZONTE 2027 ===== */
+push(`<div class="slide-pad">
+  <div class="eyebrow">Mirando a 2027</div>
+  <h2>Qué se mantiene y qué cambia</h2>
+  <div class="hz">
+    <div class="box keep"><h3 style="color:var(--verde)">Se mantiene</h3>
+      <ul><li>La estructura de Metas Sanitarias e IAAPS, prácticamente completa</li>
+          <li>El foco cardiometabólico y la cobertura de crónicos</li>
+          <li>Nuestro cálculo propio del corte, mes a mes, desde el REM</li></ul></div>
+    <div class="box go"><h3 style="color:var(--rojo)">Cambia / se retira</h3>
+      <ul><li><b>Lactancia materna 6º mes</b> deja de ser meta en 2027</li>
+          <li>Oportunidad: reasignar esa energía al <b>cierre de ciclo</b></li>
+          <li>Decisión del equipo: ¿seguimos midiendo LME por calidad?</li></ul></div>
+  </div>
+  <p class="tesis" style="margin-top:1rem">La estrategia 2027 no es abrir más puertas: es <em>cerrar el ciclo</em> del paciente que ya entró.</p>
+</div>`,
+`<span class="tech">Encuadre estratégico · 2 min</span> Aterriza la paradoja en una línea de trabajo para el año. Deja claro que casi todo el set se mantiene, así que el esfuerzo de hoy sirve para 2027. La salida de lactancia es una oportunidad de reasignar energía, no una pérdida. Repite la tesis: abrimos bien, ahora cerramos.`,"54:00");
+
+/* ===== CIERRE ===== */
+push(`<div class="slide-pad">
+  <div class="eyebrow">Compromisos · 56–59 min</div>
+  <h2>Lo que nos llevamos de hoy</h2>
+  <div class="accion"><div class="frame" style="border-left-color:var(--accent)">
+    <div class="row" style="grid-template-columns:1fr auto auto">
+      <div class="fld"><div class="k">Prioridad 1</div><div class="ph">indicador + acción</div></div>
+      <div class="fld"><div class="k">Responsable</div><div class="ph">—</div></div>
+      <div class="fld"><div class="k">Plazo</div><div class="ph">—</div></div>
+    </div>
+    <div class="row" style="grid-template-columns:1fr auto auto">
+      <div class="fld"><div class="k">Prioridad 2</div><div class="ph">indicador + acción</div></div>
+      <div class="fld"><div class="k">Responsable</div><div class="ph">—</div></div>
+      <div class="fld"><div class="k">Plazo</div><div class="ph">—</div></div>
+    </div>
+    <div class="row" style="grid-template-columns:1fr auto auto">
+      <div class="fld"><div class="k">Prioridad 3</div><div class="ph">indicador + acción</div></div>
+      <div class="fld"><div class="k">Responsable</div><div class="ph">—</div></div>
+      <div class="fld"><div class="k">Plazo</div><div class="ph">—</div></div>
+    </div>
+  </div></div>
+</div>`,
+`<span class="tech">Compromisos SMART · 3 min</span> Toma las tres más votadas y escríbelas aquí con responsable y plazo, en voz alta, confirmando con cada responsable mirándolo. Cierra nombrando quién consolida el acta (relatores → tú). Regla final: <b>específico, medible, con dueño y fecha</b>. Agradece al equipo por sostener la atención. Detén el reloj (T).`,"56:00");
+
+/* ===== FINAL ===== */
+push(`<div class="slide-pad cover" style="justify-content:center">
+  <div class="eyebrow">Gracias</div>
+  <h1>Abrimos bien.<br>En 2027, cerramos el ciclo.</h1>
+  <div class="rule"></div>
+  <p class="lead">Las acciones comprometidas se consolidan en acta y se revisan en la reunión de enero.</p>
+</div>`,
+`<span class="tech">Cierre · simbólico</span> Deja esta frase en pantalla mientras la gente sale. Es la idea que quieres que quede resonando. Fija ya la fecha de revisión de enero antes de que se dispersen.`);
+
+/* ================= MONTAJE ================= */
+const stage=document.getElementById("stage");
+S.forEach((s,i)=>{
+  const el=document.createElement("section");
+  el.className="slide";el.setAttribute("role","group");el.setAttribute("aria-label",`Diapositiva ${i+1} de ${S.length}`);
+  el.innerHTML=(/^\s*<div class="(slide-pad|divisor)/.test(s.html)?s.html:`<div class="slide-pad">${s.html}</div>`)
+     + `<span class="fuente">REM Serie A · oct 2026 · 105321+105405</span>`;
+  stage.appendChild(el);
+});
+const slides=[...document.querySelectorAll(".slide")];
+let cur=0;
+const prog=document.getElementById("prog"),count=document.getElementById("count"),
+  noteBody=document.getElementById("note-body"),noteTime=document.getElementById("note-time"),notesEl=document.getElementById("notes");
+function render(){
+  slides.forEach((s,i)=>s.classList.toggle("active",i===cur));
+  count.textContent=`${cur+1} / ${S.length}`;
+  prog.style.width=((cur)/(S.length-1)*100)+"%";
+  noteBody.innerHTML=S[cur].notes||"<i style='opacity:.6'>— sin notas para esta diapositiva —</i>";
+  noteTime.textContent=S[cur].time?("▶ "+S[cur].time):"—";
+  const a=slides[cur];a.scrollTop=0;a.focus&&a.setAttribute("tabindex","-1");
+}
+function go(n){cur=Math.max(0,Math.min(S.length-1,n));render();}
+document.getElementById("prev").onclick=()=>go(cur-1);
+document.getElementById("next").onclick=()=>go(cur+1);
+
+/* Notas */
+function toggleNotes(){notesEl.hidden=!notesEl.hidden;}
+document.getElementById("btn-notes").onclick=toggleNotes;
+
+/* Reloj de reunión */
+let secs=0,timer=null;const clock=document.getElementById("clock");
+function fmt(s){const m=Math.floor(s/60),ss=s%60;return String(m).padStart(2,"0")+":"+String(ss).padStart(2,"0");}
+function tick(){secs++;clock.textContent=fmt(secs);}
+function toggleTimer(){if(timer){clearInterval(timer);timer=null;clock.classList.remove("run");}
+  else{timer=setInterval(tick,1000);clock.classList.add("run");}}
+function resetTimer(){clearInterval(timer);timer=null;secs=0;clock.textContent="00:00";clock.classList.remove("run");}
+clock.onclick=toggleTimer;
+
+/* Pantalla completa */
+function toggleFull(){const d=document.documentElement;
+  if(!document.fullscreenElement){(d.requestFullscreen||(()=>{})).call(d).catch(()=>{});}
+  else{(document.exitFullscreen||(()=>{})).call(document).catch(()=>{});}}
+document.getElementById("btn-full").onclick=toggleFull;
+
+/* Ayuda */
+const help=document.getElementById("help");
+document.getElementById("btn-help").onclick=()=>help.classList.add("on");
+document.getElementById("help-close").onclick=()=>help.classList.remove("on");
+help.onclick=e=>{if(e.target===help)help.classList.remove("on");};
+
+/* Teclado */
+addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){e.preventDefault();go(cur+1);}
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();go(cur-1);}
+  else if(e.key==="Home"){go(0);} else if(e.key==="End"){go(S.length-1);}
+  else if(e.key==="n"||e.key==="N"){toggleNotes();}
+  else if(e.key==="t"||e.key==="T"){toggleTimer();}
+  else if(e.key==="r"||e.key==="R"){resetTimer();}
+  else if(e.key==="f"||e.key==="F"){toggleFull();}
+  else if(e.key==="?"||e.key==="h"||e.key==="H"){help.classList.toggle("on");}
+  else if(e.key==="Escape"){help.classList.remove("on");}
+});
+/* Hash para recuperar posición */
+function fromHash(){const m=/^#s(\d+)$/.exec(location.hash);if(m){const n=+m[1]-1;if(n>=0&&n<S.length)cur=n;}}
+fromHash();addEventListener("hashchange",()=>{fromHash();render();});
+const _go=go;go=function(n){_go(n);try{history.replaceState(null,"","#s"+(cur+1));}catch(e){}};
+render();
+</script>
